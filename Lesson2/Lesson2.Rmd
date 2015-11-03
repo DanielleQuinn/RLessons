@@ -1,5 +1,6 @@
 ---
 output:
+  word_document: default
   html_document:
     toc: yes
 ---
@@ -18,13 +19,17 @@ Avoid dealing with frustrating issues later by following some simple rules now:
 4. everything lowercaswe with no punctuation
 5. Missing data? Leave it blank OR fill in with NA, but *be consistent*
 
-Today we're going to be using a pre-existing dataset, which you can download here:
+Today we're going to be using a pre-existing dataset, which you find here:
 
-https://www.dropbox.com/s/uj97h9elwzxye5t/gapminder.xlsx?dl=0
+<https://github.com/DanielleQuinn/RLessons/blob/master/Lesson2/gapminder.xlsx>
 
 **Save this file to the same folder that you saved your R script.**
 
 You're going to need to convert this file to a .txt or .csv file.
+
+If you want to skip this step, you can find a .txt version of the file here:
+
+<https://raw.githubusercontent.com/DanielleQuinn/RLessons/master/Lesson2/gapminder.txt>
 
 #### Projects and Working Directory
 The **working directory** is the location on your computer that R looks for files during import, and saves files to during export. In this case, we're going to want to have the working directory be the folder that now contains the gapminder dataset and your R script.
