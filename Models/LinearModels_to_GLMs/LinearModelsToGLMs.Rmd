@@ -1,0 +1,300 @@
+---
+title: "Linear Models to GLMs"
+author: "Danielle Quinn"
+date: "Tuesday, November 03, 2015"
+output: html_document
+---
+The dataset for this tutorial can be found at:
+
+<https://raw.githubusercontent.com/DanielleQuinn/RLessons/master/Models/LinearModels_to_GLMs/Baileyetal2008.txt>
+
+You will also need to source functions from Highland Statistics Ltd., found at:
+
+<https://github.com/DanielleQuinn/RLessons/blob/master/Models/LinearModels_to_GLMs/HighStatLib.R>
+
+And a couple functions that I've created to make life easier:
+
+<https://github.com/DanielleQuinn/RLessons/blob/master/Models/LinearModels_to_GLMs/MoreFunctions.R>
+
+**Load a few required packages**
+````{r, comment=""}
+library(lattice)
+library(MASS)
+library(ggplot2)
+````
+
+**Now, source the Highland Stats Ltd. and the second set of functions and import the dataset**
+```{r, comment="", eval=FALSE}
+source("HighStatLib.R")
+source("MoreFunctions.R")
+Fish<-read.delim("Baileyetal2008.txt")
+```
+```{r, comment="", echo=FALSE}
+Fish<-read.delim(file="C:/Users/Danielle/Documents/GitHub/RLessons/Models/LinearModels_to_GLMs/Baileyetal2008.txt")
+source("C:/Users/Danielle/Documents/GitHub/RLessons/Models/LinearModels_to_GLMs/HighStatLib.R")
+source("C:/Users/Danielle/Documents/GitHub/RLessons/Models/LinearModels_to_GLMs/MoreFunctions.R")
+````
+
+Briefly, the dataset contains information about the abundance and density of a target fish species at multiple sites between 1977 and 2002, including information about site location and mean depth.
+```{r, comment=""}
+head(Fish)
+```
+
+Our underlying research question is has the density-depth relationship changed over time?
+
+**But first, some data cleaning.**
+```{r, comment=""}
+Fish<-na.exclude(Fish) # Subset data to omit NAs
+Fish<-Fish[c(-135), ] # Remove a previously identifed spatial outlier
+Fish$MeanDepth<-Fish$MeanDepth/1000 # Express Depth in km
+````
+
+**We'll start with a simple linear model**
+```{r, comment=""}
+M0<-lm(TotAbund~MeanDepth,data=Fish)
+summary(M0) # Summary
+E0<-resid(M0) # Residuals
+F0<-fitted(M0) # Fitted Values
+````
+
+Take a look at the fitted vs residual values
+```{r, comment=""}
+ggplot()+
+  geom_point(aes(x=F0,y=E0))+
+  geom_hline(yintercept=0, linetype='dashed', col='blue')+
+  theme_bw(16)+ylab("Residuals")+xlab("Fitted values")
+```
+
+Notice the pattern (heterogeneity) in the residuals? That's the first sign that this isn't a good model. But, let's move ahead anyway and take a look at the predicted values.
+```{r, comment=""}
+bio<-ggplot(Fish)+
+  geom_point(aes(x=MeanDepth, y=TotAbund), size=3)+
+  stat_smooth(aes(x=MeanDepth, y=TotAbund), size=1, method='lm', se=FALSE,col='red')+
+  geom_hline(yintercept=0, linetype='dashed', col='blue', size=1)+
+  theme_bw(16)+xlab("Mean Depth")+ylab("Total Abundance")
+bio
+```
+
+Hmm.. it appears that at high values of depth, the model predicts *negative* abundances of fish! Let's use the predicted standard error around the model line to randomly generate some potential estimates of abundance.
+
+```{r, comment=""}
+a<-range(Fish$MeanDepth)
+md<-seq(a[1],a[2],length=10)
+beta<-coef(M0)
+MeanDepth<-c()
+Estimates<-c()
+for (i in 1:10)
+{
+  MeanDepth.in<-rep(md[i],100)
+  MeanDepth<-c(MeanDepth, MeanDepth.in)
+  mu<-beta[1]+beta[2]*md[i]
+  Estimates.in<-rnorm(100,mean=mu,sd=summary(M0)$sigma)
+  Estimates<-c(Estimates, Estimates.in)
+}
+bio.check<-data.frame(MeanDepth,Estimates)
+
+# Plot Results #
+bio+geom_point(aes(x=MeanDepth, y=Estimates),col='grey50',pch=5,data=bio.check)
+```
+
+Now we can see that not only does the model predict negative abundances at high values of depth, but some of the simulated predictions fall below zero across all depths! To deal with this, we're going to use a Poisson distribution.
+
+**Let's move on to a simple GLM**
+```{r, comment=""}
+M1<-glm(TotAbund~MeanDepth,data=Fish,family=poisson(link="log"))
+summary(M1)
+E1<-resid(M1,type="pearson")
+F1<-fitted(M1)
+```
+
+Take a look at the fitted vs residual values
+```{r, comment=""}
+ggplot()+
+  geom_point(aes(x=F1,y=E1))+
+  geom_hline(yintercept=0, linetype='dashed', col='blue')+
+  theme_bw(16)+ylab("Residuals")+xlab("Fitted values")
+```
+
+Unfortunately, there's still a pattern in the residuals of our model. However, let's continue by looking at the predicted values. To generate the predicted values, you need to set up a data frame that contains all the combinations of any factors that are included in the model. In this case, it's simple because we only need to consider a single factor: `MeanDepth`. First, let's only look at a few values of `MeanDepth`.
+```{r, comment=""}
+newdata<-data.frame(MeanDepth=c(1,2,3,4))
+newdata
+````
+
+Now we'll use `predict()` to generate predicted values of `TotAbund` given the model `M1` and the `MeanDepth` found in `newdata`.
+````{r, comment=""}
+predict(M1,newdata,type='response')
+````
+
+Add the predicted values to `newdata` and plot the results
+````{r, comment=""}
+newdata$TotAbund<-predict(M1,newdata,type='response')
+
+ggplot()+
+  geom_point(aes(x=MeanDepth, y=TotAbund), data=Fish, size=3)+
+  geom_path(aes(x=MeanDepth, y=TotAbund), data=newdata, col="red", size=1)+
+  theme_bw(16)+ylab("Total Abundance")+xlab("Mean Depth")
+````
+
+Notice how the predicted line doesn't fall below zero anymore! But the line itself is a little jagged because it's only based on four points; the predicted values of `TotAbund` at depths of 1, 2, 3, and 4. Let's improve on this by predicting `TotAbund` across the range of depths that the data actually includes.
+```{r, comment=""}
+newdata<-data.frame(MeanDepth=seq(from=range(Fish$MeanDepth)[1],
+                                  to=range(Fish$MeanDepth)[2],
+                                  length=25))
+newdata$TotAbund<-predict(M1,newdata,type='response')
+
+predictions<-ggplot()+
+  geom_point(aes(x=MeanDepth, y=TotAbund), data=Fish, size=3)+
+  geom_path(aes(x=MeanDepth, y=TotAbund), data=newdata, col="red", size=1)+
+  theme_bw(16)+ylab("Total Abundance")+xlab("Mean Depth")
+predictions
+```
+
+
+It's time that we check on dispersion. Essentially, we want to look at the distribution of the data and discribe it as a non-negative number.
+```{r, comment=""}
+dispersion(M1)
+```
+
+Our model has a dispersion of `r round(dispersion(M1),1)`! When modelling, you'll want to aim for a dispersion of 1. In this case we have *overdispersion*. The model assumes that the variability of counts within a covariate group is equal to the mean. So, if the *variance is greater than the mean*, this will lead to underestimated standard errors, and overestimated significance of regression parameters.
+
+To better understand, let's simulate dispersion around our predicted values.
+```{r, comment=""}
+md<-seq(from=range(Fish$MeanDepth)[1],
+          to=range(Fish$MeanDepth)[2],
+          length=25)
+beta<-coef(M1)
+MeanDepth<-c()
+Estimates<-c()
+for(i in 1:25)
+{
+  MeanDepth.in<-rep(md[i],100)
+  MeanDepth<-c(MeanDepth, MeanDepth.in)
+  mu<-exp(beta[1]+beta[2]*md[i])
+  Estimates.in<-rpois(100,lambda=mu)
+  Estimates<-c(Estimates, Estimates.in)
+}
+bio.check<-data.frame(MeanDepth,Estimates)
+
+# Plot #
+predictions+
+  geom_point(aes(x=MeanDepth, y=Estimates),col='grey50',pch=5,data=bio.check)
+```
+
+You can see that essentially, the distribution of our predicted values (grey points) don't meaningfully describe the actual data (black points).
+
+It's possible that all of these issues could be a result of a factor that is influencing the data but not being included in the model. Let's take a look at how `Period` might influence the data. Plot the residuals against a variable not included in the model (`Period`).
+
+```{r, comment=""}
+pr.fac(M1, as.factor(Fish$Period))
+```
+
+What we want to see here is that the residuals associated with each period are normally distributed around 0. Looking at this plot, we see that this isn't true for residuals associated with period 2! This suggests to us that we should include `Period` as a factor in subsequent models.
+
+**Adding a factor to a model**
+
+```{r, comment=""}
+Fish$fPeriod<-as.factor(Fish$Period)
+M2<-glm(TotAbund~MeanDepth*fPeriod, data=Fish, family='poisson')
+summary(M2)
+dispersion(M2)
+```
+
+It turns out that this model still suffers from overdispersion. Rather than explore further, let's just move on.
+
+One thing that we haven't considered yet is that the swept area of different sites varies, meaning that the effort put into finding abundance also varies. This could be the source of our problems! Let's include `SweptArea` as an offset in our next model.
+
+**Adding an offest to a model**
+```{r, comment=""}
+Fish$logSweptArea<-log(Fish$SweptArea)
+M3<-glm(TotAbund~MeanDepth*fPeriod+offset(logSweptArea), 
+        data=Fish, family='poisson')
+summary(M3)
+E3<-resid(M3,type='pearson')
+dispersion(M3)
+```
+
+We still have overdispersion. It's time to move away from the Poisson distribution and handle this overdispersion directly.
+
+**Negative Binomial (NB) GLMs**
+Basically, NB GLMs use an additional parameter theta that accounts for the variance being greater than the mean (overdispersion). In our NB GLM we're going to include `MeanDepth` and `Period` as factors, use `logSweptArea` as an offset, and also include the interaction between `MeanDepth` and `Period`.
+
+```{r, comment=""}
+M4<-glm.nb(TotAbund~MeanDepth*fPeriod+offset(logSweptArea),data=Fish)
+summary(M4)
+dispersion(M4,modeltype='nb')
+```
+
+Notice that our dispersion is now close to 1!
+
+From here, we're going to decide if including all of the factors and interactions is meaningful to the model. To look at which, if any, terms should be dropped from the model:
+```{r, comment=""}
+drop1(M4,test="Chi")
+```
+
+This suggests that the interaction term between `MeanDepth` and `Period` isn't necessary to the model (p > 0.05) and can be dropped.
+
+**Dropping a level from the model**
+```{r, comment=""}
+M5<-glm.nb(TotAbund~MeanDepth+fPeriod+offset(logSweptArea),data=Fish)
+summary(M5)
+E5<-resid(M5,type='pearson')
+F5<-predict(M5,type="link")
+dispersion(M5,modeltype="nb")
+
+drop1(M5, test="Chi")
+```
+
+Now we can see that all of our factors are meaningful to the model, and we no longer have overdispersion. Check the residuals versus fitted values for heterogeneity.
+```{r, comment=""}
+ggplot()+
+  geom_point(aes(x=F5,y=E5))+
+  geom_hline(yintercept=0, linetype='dashed', col='blue')+
+  theme_bw(16)+ylab("Residuals")+xlab("Fitted values")
+```
+
+Great, there is no pattern! Now plot the residuals against each factor included in the model.
+```{r, comment=""}
+xyplot(E5 ~ MeanDepth | factor(Period), 
+       data = Fish,
+       xlab = list(label = "Mean depth (km)", cex = 1.5),
+       ylab = list(label = "Pearson residuals", cex = 1.5),
+       panel = function(x,y)
+         {
+         panel.points(x,y, col = 1, pch = 16, cex = 0.7)
+         panel.loess(x,y, col = 1, lwd = 2)
+         panel.abline(h=0)
+         }
+       )
+```
+
+Also no patterns here!
+
+Time to generate our predicted values of the model by creating `newdata`. Use the function `expand.grid` to easily generate a dataframe that contains all combinations of the values you require.
+```{r, comment=""}
+newdata<-expand.grid(MeanDepth=seq(from=range(Fish$MeanDepth)[1], to=range(Fish$MeanDepth)[2], length=25),
+                     fPeriod=as.factor(c(1,2)),
+                     logSweptArea=mean(log(Fish$SweptArea)))
+newdata$TotAbund<-predict(M5,newdata,type="response")
+
+# Plot #
+plotM5<-ggplot()+
+  geom_point(aes(x=MeanDepth, y=TotAbund, col=fPeriod), data=Fish, size=3, alpha=0.7)+
+  geom_path(aes(x=MeanDepth, y=TotAbund, col=fPeriod), data=newdata, size=1)+
+  theme_bw(16)+ylab("Total Abundance")+xlab("Mean Depth")+
+  scale_colour_manual(values=c("red","blue"),name="Period")
+plotM5
+```
+You can see that the model predictions vary slightly based on the `Period` that is being considered.
+
+Finally, let's add confidence limits around the predicted model lines.
+```{r, comment=""}
+newdata$fit<-predict(M5,newdata,type="link",se=TRUE)$fit
+newdata$se<-predict(M5,newdata,type="link",se=TRUE)$se
+
+plotM5+
+  geom_path(aes(x=MeanDepth, y=exp(fit-1.96*se), col=fPeriod),
+            alpha=0.7, linetype='dashed', data=newdata)+
+  geom_path(aes(x=MeanDepth, y=exp(fit+1.96*se), col=fPeriod),
+            alpha=0.7, linetype='dashed', data=newdata)
+```
