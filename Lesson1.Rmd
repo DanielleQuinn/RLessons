@@ -1,0 +1,347 @@
+---
+output:
+  word_document: default
+  html_document:
+    toc: yes
+---
+# Introduction to R and RStudio: Lesson I
+#### October 20, 2015
+
+Look for the **Source** window in RStudio (upper left) - if you don't have a source window yet, create it by selecting *File->New File->New R Script*. This is where you'll edit and execute most of your code. The code that you write here can be saved as a .R file and accessed and edited later.
+
+Look for the **Console** window in RStudio (lower left). This is where the output of your executed code appears. You can also execute code from this window, but it will not be saved. The Console has a `>` which indictaes that R is ready to go!
+
+Start by saving your new script file. To facilitate the nect lesson, save your script file in a new folder located somewhere easy to locate on your computer.
+
+### Using R as a Calculator
+The simplest thing you can do using R is arithmetic:
+
+```{r comment=""}
+1+100
+```
+
+R will print out the answer in the Console, with a preceeding `[1]`. Don't worry about this for now, we'll explain that later. For now, just think of it as indicating output.
+
+R follows the regular order of operations, and reconizes standard operators.
+
+```{r comment=""}
+3-2*5
+(6/3)^2
+```
+
+### Functions and Arguments
+Like a calculator, R can also deal with more complex math operations, like log, ln, and square root. R does this using **functions**. You can easily recognize functions because they are a word (function name) followed by round brackets.
+
+To find the square root of 81, use the `sqrt()` function:
+
+```{r comment=""}
+sqrt(81) # This finds the square root of 81
+```
+
+**Note:** The text after each line of code is called a "comment". Anything that follows after the hash symbol `#` is ignored by R when it executes the code. You should always comment your code to prevent it from becoming unwieldy and confusing!
+
+Functions (usually) require that one or more **arguments** are supplied inside the round brackets. In the last example, 81 was given as the argument.
+
+Functions only accept specific types of arguments: 
+
+```{r comment="", error=TRUE}
+sqrt("a")
+```
+
+This error is fairly easy to interpret; R can't find the square root of something that isn't a number!
+
+Functions can also be nested:
+
+```{r comment=""}
+sqrt(sqrt(81))
+```
+
+R comes with lots of standard functions:
+
+```{r comment=""}
+sin(1) # Trigonometry functions
+log(1) # Natural logarithm
+log10(10) # Base-10 logarithm
+```
+
+If you aren't sure how to properly use a function, you can tell R to display a help file in the lower right window of RStudio:
+
+```{r comment="", eval=FALSE}
+?mean
+```
+
+### Installing and Loading Packages
+In additional to the standard functions, the R community has produced many of their own. These user-made functions are accessed via **packages**, which can be installed and loaded into your RStudio session. You can also build your own functions (more on that later)!
+
+To install a package:
+
+```{r comment="", eval=FALSE}
+install.package(lubridate)
+```
+
+You only need to *install* a package once. However, every time you start up RStudio, you need to *load* any packages you'd like to use:
+
+```{r comment="", eval=FALSE}
+library(lubridate)
+```
+
+The packages you'll need to install and load for these workshops are:
+
+```{r comment="", eval=FALSE}
+# lubridate
+# ggplot2
+# dplyr
+```
+
+### Objects in R
+So now we know how to use R as a calculator using standard operations, and have been introduced to functions. But what if you'd like to find the circumference of a circle with a radius of 10, and we just can't remember the value of pi? Luckily for us, R has the value of pi stored as an **object**!
+
+```{r comment=""}
+pi # Show me the value of the object pi
+2*pi*10
+```
+
+An object is a stored value or set of values. Think of it as a container that holds values and attributes. Objects can be very simple or very complex. Often, we don't want to type out a value or set of values repeatedly. Instead, we can put these values into a container (object), and give it a name that can be quickly called on later.
+
+`pi` is an example of the simplest type of object, called a *scalar*. It contains a single value, `3.141593`.
+
+We can store values in objects using the assignment operator `<-`, like this:
+
+```{r comment=""}
+x<-45
+```
+
+Notice that assignment does not print a value. Instead, we stored it for later in an object called `x`, which we can look at:
+
+```{r comment=""}
+x
+```
+
+Look for the **Environment** tab in the upper right window of RStudio, and you will see that `x` and its value have appeared.
+
+#### Naming Objects
+Object names can contain letters, numbers, underscores, and periods. They can not start with a number, nor contain any spaces. When naming an object, be sure that it is:
+
+1. Short, but easily recognizable
+2. Meaningful
+3. Consistent format
+4. No capitals
+
+**Good:** `meanage`, `heights_2013`, `heights_2014` 
+
+**Bad:** `a`, `a2`, `AverageCarapaceLengthofCrabsIn2013`
+
+
+Create an object called `odds` that contains the values 1, 3, 5, 7, and 9. We'll use R's concatenate function `c()` to achieve this:
+
+```{r comment=""}
+odds<-c(1,3,5,7,9)
+odds
+```
+
+What if we wanted `odds` to include many more odd values? We can use the `seq()` function to do this quickly:
+
+```{r comment=""}
+odds<-seq(from=1, to=99, by=2) # Generate a sequence of numbers from 1 to 99, increasing by 2.
+odds
+```
+
+### Types of Data Structures and Values
+It's important to understand the basic types of data *structures* and *values* that exist.
+
+Our object `odds` is a **vector**, which is a simple data structure that is 1-dimensional and has a length > 1. Vectors are *atomic*, which means that they can only hold one type of value at a time.
+
+R has 5 basic types of values:  
+
+1. logical (e.g. `TRUE`, `FALSE`)  
+2. numeric integer (e.g. `21`)  
+3. numeric double (i.e. decimal) (e.g. `24.56`, `pi`)  
+4. complex (e.g. `1 + 4i`)  
+5. text (called "character" in R) (e.g. `"a"`, `"This is a cat"`)  
+
+Create a vector object called `fruit` that contains character values: 
+
+```{r comment=""}
+fruit<-c("apple","banana","grape","peach","orange")
+fruit
+```
+
+#### Let's take a closer look at these objects
+You can use simple functions to learn more about objects:
+
+```{r comment=""}
+length(fruit) # How many values are in the object?
+mean(odds) # What is the mean value?
+str(odds) # What data type?
+str(fruit)
+```
+
+Other data structures that are commonly used in R are:  
+* list  
+* matrix  
+* data frame  
+
+Data frames are a very common structure, and we'll talk more about them in the next lesson. For the rest of this lesson, we're going to remained focused on vectors.
+
+### Indexing
+Recall at the very beginning of this tutorial:
+
+```{r comment=""}
+1+100
+```
+
+We noted that R printed out the answer in the Console, with a preceeding `[1]`. This `[1]` is actually a positional value.
+
+Try this:
+
+```{r comment=""}
+rnorm(100) # 100 random numbers
+```
+
+R displays the positional value (index) along the left hand side of the output.
+
+You can use this to look at values ('elements') at specified positions in objects. For vectors, the square brackets operator means "get me the n^th^ element". 
+
+```{r comment=""}
+fruit # View fruit
+length(fruit) # How many values are in the object fruit?
+fruit[2] # View value in position 2 of fruit
+```
+
+We can ask for multiple elements at once:
+
+```{r comment=""}
+fruit[c(2,5)] # View values in position 2 and 5 of fruit
+```
+
+The `:` operator just creates a sequence of numbers from the left element to the right; i.e. `fruit[c(2:5)]` is equivalent to `fruit[c(2,3,4,5)]`:
+
+```{r comment=""}
+fruit[c(2:5)] # View value in positions 2:5 of fruit
+```
+
+If we use a negative value as the index of a vector, R will return every element *except* for the one specified:
+
+```{r comment=""}
+fruit[-3] # View fruit except for the value in position 3
+```
+
+If we want to permanently remove an element from a vector, we need to assign the results back into the object:
+
+```{r comment=""}
+fruit<-fruit[-3] # Permanently removes element 3 from fruit
+fruit # New values of fruit
+```
+
+**Note:** In many programming languages (C and python, for example), the first element of a vector has an index of 0. In R, the first element has an index of 1.
+
+### Logical Tests
+Let's say that we only wanted to look at values of `odds` that are equal to 3. Recall that `odds` is a numeric vector:
+
+```{r comment=""}
+odds
+```
+
+In R, an `==` is a conditional operator that asks the question "is _ equal to _ ?":
+
+```{r comment=""}
+odds==3 # Does odds equal 3?
+```
+
+The conditional operator (`==`) is applied to every value in the vector `odds`. In this case, only the second element of `odds` is equal to 3.
+
+We can use the `which()` function to return the indices of all `TRUE` elements of its argument:
+
+```{r comment=""}
+which(odds==3) # Which indices of odds are equal to 3?
+```
+
+Say that we want to permanently remove any values of `odds` that are equal to 3. We can use the code above to achieve this:
+
+```{r comment=""}
+odds<-odds[-which(odds==3)] # Remove any value of odds equal to 3.
+odds
+```
+
+What if we want to look at which indices of `odds` are equal to 5, 17, to 39? Because we want to look at multiple values, we can't use the `==` operator. Instead:
+
+```{r comment=""}
+which(odds %in% c(5,17,39)) # Which indices are equal to 5, 17, or 39?
+odds[which(odds %in% c(5,17,39))] # View only those elements
+```
+
+In fact, you don't need to include the `which()` function inside the `[]`!
+
+```{r comment=""}
+odds[odds %in% c(5,17,39)] # View elements equal to 5, 17, or 39
+```
+
+Other conditional operators include:
+```{r comment=""}
+odds[odds>49]
+odds[odds<=25]
+```
+
+There are many situations in which you will wish to combine mutiple conditions:  
+* `|` logical OR; returns `TRUE` if either the left or right are `TRUE`  
+* `&` logical AND; returns`TRUE` if both the left or right are `TRUE`  
+* `!` logical NOT; converts `TRUE` to `FALSE` and `FALSE` to `TRUE`  
+
+```{r comment=""}
+odds[odds==21 | odds>90] # Equal to 21 OR greater than 90
+odds[odds>30 & odds<=51] # Greater than 30 AND less than or equal to 51
+odds[!odds>45] # Not greater than 45
+```
+
+### Handling Special Values
+At some point you will encounter functions in R which can not handle missing, infinite or undefined data. There are a number of special functions and arguments that you can use to overcome these issues.
+
+For now, let's focus on the most basic scenario. Let's create a simple vector that contains a missing value (`NA`):
+
+```{r comment=""}
+special<-c(1,2,3,4,NA,5,6,7,8)
+special
+```
+
+If we want to find the minimum and maximum values of our vector `special`:
+
+```{r comment=""}
+min(special) # Minimum
+max(special) # Maximum
+```
+
+We can see that in both cases, R is not able to do anything sensible! Many of the basic functions in R have an optional argument that can be used to tell the function to ignore NAs before applying the function:
+
+```{r comment=""}
+min(special, na.rm=TRUE) # Ignore NAs
+max(special, na.rm=TRUE) # Ignore NAs
+```
+
+Now what if we wanted to only look at values of `special` that are greater than 5?
+```{r comment=""}
+special[special>5]
+```
+
+This doesn't work! We need to add a conditional operator:
+```{r comment=""}
+which(is.na(special)) # Which values of species are NA?
+special[special>5 & !is.na(special)]
+```
+This can be read as "Show me `special` where `special` is greater than 5 *and* `special` is not `NA`".
+
+### Factors
+Factors are special vectors that represent categorical data. Factors can be ordered or unordered and are important for modeling functions such as `lm()`, and also when plotting or summarizing data.
+
+Factors can only contain predefined values, and we can create one with the `factor` function:
+```{r comment=""}
+myfactor<-factor(c("no","yes","no","no","yes","yes"))
+myfactor
+```
+
+So we can see that the output is very similar to a character vector (such as `fruit`), but with an attached levels component. This becomes clearer when we look at its structure:
+
+```{r comment=""}
+str(myfactor)
+```
+
+This reveals something important: while factors look (and often behave) like character vectors, they are actually hidden integers; here, we can see that "no" is represented by a 1, and "yes" a 2.
