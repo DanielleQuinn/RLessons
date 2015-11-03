@@ -1,0 +1,292 @@
+---
+title: "Introduction to Resampling in R"
+author: "DQuinn"
+date: "Friday, November 06, 2015"
+output: html_document
+---
+
+Ecological studies often suffer from limited resource availability, including time, money, and people power. Oversampling not only taxes these resources needlessly, but may also negatively influence the system being studied; for example, through lethal collections of organisms or unnecessary handling of non-target species. Projects relying on data collection over multiple field seasons may benefit from resampling algorithms that can identify efficient collection protocols if oversampling is known or thought to have occurred.
+
+We'll be using a mock data set of tagged and non-tagged eels captured in a small lake to estimate population size, then build a resampling algorithm to explore the sensitivity of using varying numbers of traps and sampling events.
+
+- 50 American eels were captured from a small lake, marked with an external tag, and released back into the lake
+- 15 traps were checked 20 times over a season
+- number of tagged and non-tagged eels in each trap was recorded
+
+**Load Required Packages**
+```{r, message=FALSE, warning=FALSE}
+library(dplyr)
+library(FSA)
+library(ggplot2)
+library(digest)
+library(lubridate)
+```
+
+You can find the dataset here:
+<https://github.com/DanielleQuinn/RLessons/blob/master/SensitivityAnalysis/recapture_data.csv>
+
+```{r, comment="", eval=FALSE}
+df.data<-read.csv("recapture_data.csv")
+```
+```{r, comment="", echo=FALSE}
+df.data<-read.csv(file="C:/Users/Danielle/Documents/GitHub/RLessons/SensitivityAnalysis/recapture_data.csv")
+```
+
+First, take a look at the data frame `df.data`
+```{r, comment=""}
+head(df.data)
+str(df.data)
+```
+
+**Baseline Population Size Estimate**
+
+We'll be using the `mrClosed()` function from the `FSA` package to estimate the population size using the Schnabel method. Without getting into too much detail, the Schnbabel method is used when we have multiple sampling occassions and assumes a closed population. The function requires specific input, including:
+
+- `n`: the number of captured animals
+- `m`: the number of recaptured marked animals
+- `M`: the number of extant marked animals prior to the sample
+
+*Step 1:* Build cmr data frame
+```{r, comment=""}
+df.cmr<-data.frame(df.data%>%
+                     group_by(check)%>%
+                     summarise(date=unique(check),n=sum(present), m=sum(tag), M=50)%>%
+                     select(n,m,M))
+```
+
+*Step 2:* Estimate population size
+```{r, comment=""}
+pop.est<-summary(with(df.cmr,mrClosed(n=n,m=m,M=M,method="Schnabel"))) #From FSA package
+pop.low<-stats::confint(with(df.cmr,mrClosed(n=n,m=m,M=M,method="Schnabel")))[1] # Confidence intervals #
+pop.high<-stats::confint(with(df.cmr,mrClosed(n=n,m=m,M=M,method="Schnabel")))[2] # Confidence intervals #
+baseline<-data.frame(pop.est, pop.low, pop.high)
+baseline
+```
+
+We see that using all of the data avilable (50 traps each checked 20 times), our population estimate is `r pop.est`, with confidence intervals of `r pop.low` and `r pop.high`. 
+
+Because the lake is very small, we're fairly certain that oversampling may have occurred, and our goal is to design a sampling protocol for the next year that maximizes the efficiency of our sampling effort. We want to know the minimum number of traps and the minimum number of checks that we can do that will result in a realistic estimate of population size.
+
+**Sample 10 Random Traps**
+```{r, comment=""}
+all_traps<-unique(df.data$trap) # A vector of all available traps
+use_traps<-sample(all_traps, 10) # Choose 10 random traps
+```
+
+Subset the data to include only those traps, then create `df.cmr` and use `mrClosed()` to estimate population size.
+```{r, comment=""}
+my_subset<-data.frame(df.data%>%
+  filter(trap %in% use_traps))
+
+df.cmr<-data.frame(my_subset%>%
+                     group_by(check)%>%
+                     summarise(date=unique(check),n=sum(present), m=sum(tag), M=50)%>%
+                     select(n,m,M))
+
+pop.est<-summary(with(df.cmr,mrClosed(n=n,m=m,M=M,method="Schnabel"))) #From FSA package
+pop.low<-stats::confint(with(df.cmr,mrClosed(n=n,m=m,M=M,method="Schnabel")))[1] # Confidence intervals #
+pop.high<-stats::confint(with(df.cmr,mrClosed(n=n,m=m,M=M,method="Schnabel")))[2] # Confidence intervals #
+results<-data.frame(pop.est, pop.low, pop.high)
+results
+```
+
+**Sample X Random Traps**
+
+Repeat this analysis using varying numbers of traps and see how our results vary from the baseline population estimates. We are going to resample from 10 to 50 random traps and apply to analysis for each subset.
+
+*Step 1:* Build a function that creates the cmr data frame and produces the population estimate and confidence intervals
+```{r, comment=""}
+my_cmr<-function(my_subset)
+{
+  # Build cmr data frame
+  df.cmr<-data.frame(my_subset%>%
+                        group_by(check)%>%
+                        summarise(date=unique(check),n=sum(present), m=sum(tag), M=50)%>%
+                        select(n,m,M))
+  
+  # Estimate Population Size
+  pop.est<<-summary(with(df.cmr,mrClosed(n=n,m=m,M=M,method="Schnabel"))) #From FSA package
+  pop.low<<-stats::confint(with(df.cmr,mrClosed(n=n,m=m,M=M,method="Schnabel")))[1] # Confidence intervals #
+  pop.high<<-stats::confint(with(df.cmr,mrClosed(n=n,m=m,M=M,method="Schnabel")))[2] # Confidence intervals #
+}
+```
+
+*Step 2:* Set up a data frame to handle the output of the analyses
+We want a data frame that has information about how many traps were used, and the results of our analysis. In this case, we're going to have 41 sets of output.
+```{r, comment=""}
+results<-data.frame(traps=c(10:50), pop.est=NA, pop.low=NA, pop.high=NA)
+results
+```
+
+*Step 3:* Resample the data and fill in the results data frame
+```{r, comment=""}
+for(i in 1:nrow(results)) # For each row in our results data frame
+{
+  use_traps<-sample(all_traps, results$traps[i]) # Sample x number of random traps
+  my_subset<-data.frame(df.data%>%filter(trap %in% use_traps)) # Subset the data to only include those traps
+  my_cmr(my_subset) # Apply our my_cmr function to the subset
+  results$pop.est[i]<-pop.est # Fill in our results
+  results$pop.low[i]<-pop.low
+  results$pop.high[i]<-pop.high
+}
+results
+```
+
+*Step 4:* Visualize results
+```{r, comment=""}
+ggplot(results)+
+  geom_line(aes(x=traps, y=pop.est))+
+  geom_line(aes(x=traps, y=pop.low), linetype='dashed')+
+  geom_line(aes(x=traps, y=pop.high), linetype='dashed')+
+  geom_hline(yint=baseline$N, col='green4')+
+  geom_hline(yint=baseline$pop.low, col='green4',linetype='dashed')+
+  geom_hline(yint=baseline$pop.high, col='green4',linetype='dashed')+
+  theme_bw(16)+xlab("Number of Traps")+ylab("Population Estimate")
+```
+
+Because random traps are selected each time, your results will look slightly different. However, you should see the same amount of variation in population estimates. Why is there so much variation? It's because we're only randomly selecting each number of traps a single time. To really get an idea of the overall sensitivity of the population estimate to the number of traps used, we'll repeat this resampling algorithm many times.
+
+**Bootstrapping**
+
+Repeat this algorithm 25 times, but instead of varying the number of traps to be 1 to 50, we'll limit those options to be 10, 15, 20, ...50.
+
+*Step 1:* Build a function - already done!
+
+*Step 2:* Set up a data frame to handle the output of the analyses
+In this case, we're going to have 9 (different numbers of traps to select) x 25 (repeats) outputs:
+```{r, comment=""}
+results<-data.frame(traps=rep(seq(from=10, to=50, by=5),25), pop.est=NA, pop.low=NA, pop.high=NA)
+head(results)
+```
+
+*Step 3:* Resample and fill in the results data frame
+In addition, we'll set up a means of keeping track of how long the resampling takes, and how long each iteration takes to complete.
+```{r, comment=""}
+starttime=Sys.time() # What time does the resampling begin?
+for(i in 1:nrow(results))
+{
+  use_traps<-sample(all_traps, results$traps[i])
+  my_subset<-data.frame(df.data%>%filter(trap %in% use_traps))
+  my_cmr(my_subset)
+  results$pop.est[i]<-pop.est
+  results$pop.low[i]<-pop.low
+  results$pop.high[i]<-pop.high
+}
+totaltime<-difftime(Sys.time(),starttime, unit="secs") #How long did it take?
+totaltime
+paste(round(as.numeric(totaltime)/nrow(results),2),"seconds per iteration") # How long did each iteration take?
+```
+
+*Step 4:* Visualize results
+```{r, comment=""}
+ggplot(results)+
+  geom_line(aes(x=traps, y=pop.est))+
+  geom_line(aes(x=traps, y=pop.low), linetype='dashed')+
+  geom_line(aes(x=traps, y=pop.high), linetype='dashed')+
+  geom_hline(yint=baseline$N, col='green4')+
+  geom_hline(yint=baseline$pop.low, col='green4',linetype='dashed')+
+  geom_hline(yint=baseline$pop.high, col='green4',linetype='dashed')+
+  theme_bw(16)+xlab("Number of Traps")+ylab("Population Estimate")
+```
+
+Why do we have jagged lines? It's because each value of traps has 25 points associate with it. There are different ways to deal with this.
+
+*Option 1:* Don't use a line to represent the resampled data.
+```{r, comment=""}
+ggplot(results)+
+  geom_jitter(aes(x=traps, y=pop.est), alpha=0.7)+
+  geom_jitter(aes(x=traps, y=pop.low), col='purple', alpha=0.7)+
+  geom_jitter(aes(x=traps, y=pop.high), col='red', alpha=0.7)+
+  geom_hline(yint=baseline$N, col='green4')+
+  geom_hline(yint=baseline$pop.low, col='green4',linetype='dashed')+
+  geom_hline(yint=baseline$pop.high, col='green4',linetype='dashed')+
+  theme_bw(16)+xlab("Number of Traps")+ylab("Population Estimate")
+```
+
+You can start to see that when few traps are used, the population estimates are much more variable than if many traps are used.
+
+*Option 2:* Summarize the data.
+```{r, comment=""}
+results.sum<-data.frame(results%>%
+  group_by(traps)%>%
+  summarise(mean.pop=mean(pop.est), mean.low=mean(pop.low), mean.high=mean(pop.high)))
+
+ggplot(results.sum)+
+  geom_line(aes(x=traps, y=mean.pop))+
+  geom_line(aes(x=traps, y=mean.low), linetype='dashed')+
+  geom_line(aes(x=traps, y=mean.high), linetype='dashed')+
+  geom_hline(yint=baseline$N, col='green4')+
+  geom_hline(yint=baseline$pop.low, col='green4',linetype='dashed')+
+  geom_hline(yint=baseline$pop.high, col='green4',linetype='dashed')+
+  theme_bw(16)+xlab("Number of Traps")+ylab("Population Estimate")
+```
+
+**More Bootstrapping**
+
+Recall that each trap was checked 20 times. Imagine all of the time and effort that would be saved if we could sample traps fewer times and still be confident in our population estimates! In addition to exploring the sensitivity of the number of traps, let's add another level to this analysis and include a varying number of checks. We'll say that we want to see what would happen if 10 to 20 checks were done.
+
+Because we've been keeping track of how long each iteration takes (approx. 0.03 sec, depending on the processing power of your computer), we know that we can easily do more iterations within a reasonable time frame. We'll do 40 repeats this time.
+
+*Step 1:* Build a function - already done!
+
+*Step 2:* Set up a data frame to handle the output of the analyses
+In this case, we're going to have 9 (different numbers of traps to select) x 11 (different numbers of checks to select) x 40 (repeats) outputs. Using `expand.grid()` will be useful here; it creates a dataframe of every combination of each argument you give it. 
+```{r, comment=""}
+results<-expand.grid(traps=seq(from=10, to=50, by=5), checks=c(10:20), repeats=c(1:40))
+nrow(results) # How many iterations?
+nrow(results)*0.03/60 # It should take roughly 2 minutes
+
+# We can get rid of the repeats column
+results<-results[,-3]
+
+# And need to add the pop.est, pop.low, and pop.high columns
+results$pop.est<-NA
+results$pop.low<-NA
+results$pop.high<-NA
+```
+
+*Step 3:* Resample and fill in the results data frame
+```{r, comment=""}
+starttime=Sys.time()
+for(i in 1:nrow(results))
+{
+  print(paste(i/nrow(results)*100, "% Complete"))
+  use_traps<-sample(all_traps, results$traps[i])
+  use_checks<-sample(all_checks, results$checks[i])
+  my_subset<-data.frame(data%>%filter(trap %in% use_traps)%>%filter(check %in% use_checks))
+  my_cmr(my_subset)
+  results$pop.est[i]<-pop.est
+  results$pop.low[i]<-pop.low
+  results$pop.high[i]<-pop.high
+}
+totaltime<-difftime(Sys.time(),starttime, unit="secs")
+totaltime
+paste(round(as.numeric(totaltime)/nrow(results),2),"seconds per iteration")
+```
+
+*Step 4:* Visualize results
+```{r, comment=""}
+results.sum<-data.frame(results%>%
+                          group_by(traps, checks)%>%
+                          summarise(mean.pop=mean(pop.est), mean.low=mean(pop.low), mean.high=mean(pop.high)))
+
+ggplot(results.sum)+
+  geom_line(aes(x=traps, y=mean.pop))+
+  geom_line(aes(x=traps, y=mean.low), linetype='dashed')+
+  geom_line(aes(x=traps, y=mean.high), linetype='dashed')+
+  geom_hline(yint=baseline$N, col='green4')+
+  geom_hline(yint=baseline$pop.low, col='green4',linetype='dashed')+
+  geom_hline(yint=baseline$pop.high, col='green4',linetype='dashed')+
+  theme_bw(22)+xlab("Number of Traps")+ylab("Population Estimate")+
+  facet_wrap(~checks)
+
+ggplot(results.sum)+
+  geom_line(aes(x=checks, y=mean.pop))+
+  geom_line(aes(x=checks, y=mean.low), linetype='dashed')+
+  geom_line(aes(x=checks, y=mean.high), linetype='dashed')+
+  geom_hline(yint=baseline$N, col='green4')+
+  geom_hline(yint=baseline$pop.low, col='green4',linetype='dashed')+
+  geom_hline(yint=baseline$pop.high, col='green4',linetype='dashed')+
+  theme_bw(22)+xlab("Number of Checks")+ylab("Population Estimate")+
+  facet_wrap(~traps)
+```
