@@ -15,3 +15,11 @@
   - Indexing data frames
   - Handling dates using lubridate
   - Simple looping
+* Linear Models to GLMs
+  - Linear models
+  - Checking for heterogeneity
+  - Poisson GLMs
+  - Overdispersion
+  - Model predictions
+  - Adding factors and offsets
+  - Negative binomial GLMs
