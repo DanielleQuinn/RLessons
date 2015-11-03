@@ -1,2 +1,17 @@
 # RLessons
-Collection of R tutorials and lessons
+### A Collection of R Tutorials and Lessons ###
+
+* Lesson 1: Introduction to R and R Studio I
+  - Using R as a calculator
+  - Functions and arguments
+  - Installing and loading packages
+  - Objects in R
+  - Data structures
+  - Indexing
+  - Factors
+* Lesson 2: Introduction to R and R Studio II
+  - Importing data
+  - Data frames
+  - Indexing data frames
+  - Handling dates using lubridate
+  - Simple looping
