@@ -2,7 +2,7 @@
 title: "Introduction to Resampling in R"
 author: "DQuinn"
 date: "Friday, November 06, 2015"
-output: html_document
+output: word_document
 ---
 
 Ecological studies often suffer from limited resource availability, including time, money, and people power. Oversampling not only taxes these resources needlessly, but may also negatively influence the system being studied; for example, through lethal collections of organisms or unnecessary handling of non-target species. Projects relying on data collection over multiple field seasons may benefit from resampling algorithms that can identify efficient collection protocols if oversampling is known or thought to have occurred.
@@ -224,7 +224,9 @@ ggplot(results.sum)+
 **More Bootstrapping**
 
 Recall that each trap was checked 20 times. Imagine all of the time and effort that would be saved if we could sample traps fewer times and still be confident in our population estimates! In addition to exploring the sensitivity of the number of traps, let's add another level to this analysis and include a varying number of checks. We'll say that we want to see what would happen if 10 to 20 checks were done.
-
+```{r, comment=""}
+all_checks<-unique(df.data$check)
+```
 Because we've been keeping track of how long each iteration takes (approx. 0.03 sec, depending on the processing power of your computer), we know that we can easily do more iterations within a reasonable time frame. We'll do 40 repeats this time.
 
 *Step 1:* Build a function - already done!
@@ -250,10 +252,10 @@ results$pop.high<-NA
 starttime=Sys.time()
 for(i in 1:nrow(results))
 {
-  print(paste(i/nrow(results)*100, "% Complete"))
+  # print(paste(i/nrow(results)*100, "% Complete")) # This is useful for keeping track of how many iterations have been completed
   use_traps<-sample(all_traps, results$traps[i])
   use_checks<-sample(all_checks, results$checks[i])
-  my_subset<-data.frame(data%>%filter(trap %in% use_traps)%>%filter(check %in% use_checks))
+  my_subset<-data.frame(df.data%>%filter(trap %in% use_traps)%>%filter(check %in% use_checks))
   my_cmr(my_subset)
   results$pop.est[i]<-pop.est
   results$pop.low[i]<-pop.low
@@ -277,7 +279,7 @@ ggplot(results.sum)+
   geom_hline(yint=baseline$N, col='green4')+
   geom_hline(yint=baseline$pop.low, col='green4',linetype='dashed')+
   geom_hline(yint=baseline$pop.high, col='green4',linetype='dashed')+
-  theme_bw(22)+xlab("Number of Traps")+ylab("Population Estimate")+
+  theme_bw(16)+xlab("Number of Traps")+ylab("Population Estimate")+
   facet_wrap(~checks)
 
 ggplot(results.sum)+
@@ -287,6 +289,8 @@ ggplot(results.sum)+
   geom_hline(yint=baseline$N, col='green4')+
   geom_hline(yint=baseline$pop.low, col='green4',linetype='dashed')+
   geom_hline(yint=baseline$pop.high, col='green4',linetype='dashed')+
-  theme_bw(22)+xlab("Number of Checks")+ylab("Population Estimate")+
+  theme_bw(16)+xlab("Number of Checks")+ylab("Population Estimate")+
   facet_wrap(~traps)
 ```
+
+You can use these plots to start identifying the number of traps and the number of checks that result in population estimates that you consider to be acceptable, and from there you can design more efficient sampling protocols for next year!
