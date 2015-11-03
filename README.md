@@ -23,3 +23,9 @@
   - Model predictions
   - Adding factors and offsets
   - Negative binomial GLMs
+* Sensitivity Analysis
+  - Oversampling
+  - Identifying target/baseline values
+  - Resampling
+  - Bootstrapping
+  - Calculating processing time required
