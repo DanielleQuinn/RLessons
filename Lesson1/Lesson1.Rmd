@@ -1,8 +1,8 @@
 ---
 output:
+  word_document: default
   html_document:
     toc: yes
-  word_document: default
 ---
 # Introduction to R and RStudio: Lesson I
 #### October 20, 2015
