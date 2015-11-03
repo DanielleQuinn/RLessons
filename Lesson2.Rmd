@@ -1,0 +1,291 @@
+---
+output:
+  html_document:
+    toc: yes
+---
+# Introduction to R and RStudio: Lesson II
+#### October 20, 2015
+
+### Importing Data
+Importing data into R tends to be a stumbling block for first-time (and even experienced) users. Data quality, in the form of spreadsheet formatting, is extremely important!
+
+#### Preparing your data for import
+Avoid dealing with frustrating issues later by following some simple rules now:
+
+1. Save as a .txt or .csv
+2. Every column uniquely and simply named
+3. Individual column for each component of date/time (*trust us*)
+4. everything lowercaswe with no punctuation
+5. Missing data? Leave it blank OR fill in with NA, but *be consistent*
+
+Today we're going to be using a pre-existing dataset, which you can download here:
+
+https://www.dropbox.com/s/uj97h9elwzxye5t/gapminder.xlsx?dl=0
+
+**Save this file to the same folder that you saved your R script.**
+
+You're going to need to convert this file to a .txt or .csv file.
+
+#### Projects and Working Directory
+The **working directory** is the location on your computer that R looks for files during import, and saves files to during export. In this case, we're going to want to have the working directory be the folder that now contains the gapminder dataset and your R script.
+
+To check your current working directory:
+```{r comment="", eval=FALSE}
+getwd()
+```
+
+To set your working directory, specify your folder location:
+```{r comment="", eval=FALSE}
+setwd("C:/Users/Danielle/Desktop")
+```
+
+Using an R Project saves you from needing to explicitly specify your working directory. It may also help keep your files organized including datasets, script files, and figures.
+
+We're going to set up an R Project to look at the gapminder dataset (which you should have downloaded using the link above).
+
+1. Click *File->New Project*
+2. Select *Existing Directory*
+3. Choose the folder that contains your script and data file
+
+#### Importing
+Depending on if your file is a .txt (tab-delimited) or a .csv (comma separated), you'll need to use one of the following functions to bring your data into R:
+
+```{r comment="", error=FALSE}
+mydata<-read.delim("gapminder.txt") # .txt
+```
+
+```{r comment="", error=FALSE, eval=FALSE}
+mydata<-read.csv("gapminder.csv") # .csv
+```
+
+Notice that we've created an object called `mydata` which contains the contents of your file. To look at this object:
+
+```{r comment="", eval=FALSE}
+mydata # Shows your data in the Console
+View(mydata) # Shows your data as a new tab in the Source window
+```
+
+### Data Frames
+You've already learned about two types of data structures; scalar (1-dimensional, length = 1) and vector (1-dimensional, length >1).
+
+```{r comment=""}
+class(mydata) # What data structure (class) is my data?
+```
+
+The object `mydata` is a **data frame**. A data frame is the standard structure for storing and manipulating rectangular data sets. It is 2-dimensional, meaning that it consists of rows and columns, and if we extract a single column from a data frame we end up with an atomic vector.
+
+There are lots of simple functions that you can use to interrogate a data frame:
+
+```{r comment=""}
+dim(mydata) # Dimensions (rows, columns)
+nrow(mydata) # Number of rows
+ncol(mydata) # Number of columns
+head(mydata) # First 6 rows
+tail(mydata, n=2) # Last 2 rows
+```
+
+In a typical data frame, each column is considered a variable and has a corresponding name (header). Columns are denoted by `$` and can be called out of the data frame by name:
+```{r comment=""}
+names(mydata) # Column (variable) names
+```
+
+```{r comment="", eval=FALSE}
+mydata$country # Extract the 'country' column as a vector (not shown here because it has a length of 1704!)
+```
+
+Look again at the first few rows of `mydata`, and recall the various data types that were discussed earlier. Can you predict what type of data each of the columns will be?
+```{r comment=""}
+head(mydata)
+```
+
+Let's look at the class types of year and country:
+```{r comment=""}
+class(mydata$year)
+class(mydata$country)
+```
+You might be surprised to notice that the column called country is not a character vector, but a factor. One of the default behaviours of R is to treat any text columns as factors when reading in the data. The reason for this is that text columns often represent categorical data, which need to be factors to be handled appropriately by statistical modeling functions in R.
+
+#### Checking Data Quality
+You know your own data best, and you should always check the class of each of your columns to ensure that they make sense. Rather than check a single column at a time, you can look at all of them at once:
+```{r comment=""}
+str(mydata) # Data structure details
+```
+
+Another handy function for quickly checking data quality is:
+```{r comment=""}
+summary(mydata)
+```
+This shows you summary statistics for each of you columns. Recall from Lesson I that if a vector contains any missing values, basic statistics such as mean will output `NA`.
+
+### Indexing Data Frames
+Being able to subset and manipulte data frames through indexing is essential to data analysis in R. Just like vectors, data frames can be indexed using `[]`.
+
+We've already established that extracting a column from a dataset using the `$` operator results in a vector of values. Therefore, we already know how to look at the 5^th^ value of a single column:
+```{r comment=""}
+mydata$year[5]
+```
+
+The indices for a data frame follows the RowsxColumns principle; essentially if you provide two indices, the first being row and the second being column, R will output the specified element(s):
+
+```{r comment=""}
+mydata[1,6] # Value in row 1, column 6
+```
+
+As we've learned using vectors, multiple values can be given for each index:
+
+```{r comment=""}
+mydata[5:9, c(3,6)] # Values in rows 5 to 9, columns 3 and 6
+```
+
+You can also choose to leave an index blank, which tells R to output all elements in that dimension (rows or columns).
+```{r comment=""}
+mydata[1:3,] # Values in rows 1 to 3, all columns
+```
+
+#### Subsetting Data Frames
+At any point you can store the output as an object:
+
+```{r comment=""}
+newdata<-mydata[1:25,] # Create a new object called newdata which contains the first 25 rows of mydata
+newdata
+```
+
+Let's say that we want to only look at observations (rows) of `newdata` since 1990:
+
+```{r comment=""}
+which(newdata$year>1990) # Which values of the vector year are greater than 1990?
+```
+
+This output tells us which values of the vector year are greater than 1990. It's important to understand that the first value of the vector `newdata$year` is the value of the column year that corresponds to row 1, the second value to row 2, and so forth. This means that this output provides us with the rows of the data frame that we're interested in seeing.
+
+```{r comment=""}
+newdata[which(newdata$year>1990),]
+```
+
+Just like we saw with vectors, it's not necessary to include the `which()` function here.
+
+```{r comment=""}
+newdata[newdata$year>1990,]
+```
+
+You can extend this concept to subset extracted columns (vectors) based on the values found in other columns. For example, let's look at population ("pop"") in Afghanistan:
+
+```{r comment="", error=TRUE}
+newdata$pop[newdata$country==Afghanistan]
+```
+
+Why did we get an error? It's because we haven't indicated that Afghanistan is a word (character string), and so R tries to find an object named Afghanistan!
+
+```{r comment=""}
+newdata$pop[newdata$country=="Afghanistan"] # pop in Afghanistan
+```
+
+The key here is to always understand what you're trying to subset! If you're subsetting a vector (i.e. an extracted column), you only need to give a single value for indexing:
+```{r comment=""}
+mydata$year[6]
+```
+If you're subsetting a data frame, you need to give it two values for indexing:
+```{r comment=""}
+mydata[3,4]
+```
+
+### Handling Dates in R
+The package `{lubridate}` is a simple method of dealing with dates and times in R.
+
+```{r comment=""}
+library(lubridate) # Load lubridate
+```
+
+First, let's create a dataframe of date information that you would expect to have in a typical data set using the function `data.frame`:
+
+```{r comment=""}
+mydates<-data.frame(site=c("site1","site2","site3"),day=c(1:30), month=9, year=2014, rain=rnorm(30, 5,2), roots=rnorm(30,40,4))
+mydates
+```
+
+Now, we're going to parse this information to create dates that R will recognize as dates.
+
+We're going to use the `dmy()` function to achieve this. This function requires a specifically formatted argument which looks like this:
+
+````{r comment=""}
+"01-05-2012" # "dd-mm-yyyy"
+```
+
+Luckily, we can use the `paste()` function to easily use the `mydates` dataframe to do this:
+
+```{r comment=""}
+paste(mydates$day, mydates$month, mydates$year, sep="-") # The sep argument tells R what we want each value to be separated by; in this case a dash
+```
+
+Let's save this vector as a object to simplify it:
+
+````{r comment=""}
+dates_input<-paste(mydates$day, mydates$month, mydates$year, sep="-")
+str(dates_input)
+````
+
+And apply the `dmy()` function to this vector to create a vector of actual dates, which we'll add as a new column called `date` in our `mydates` dataframe:
+
+```{r comment=""}
+mydates$date<-dmy(dates_input)
+str(mydates$date)
+```
+
+Notice that while `dates_input` is a character vector, `dmy()` converts these values to be proper dates recognizable in R (i.e. POSIXct)! Take a look at the resulting data frame:
+
+```{r comment=""}
+head(mydates)
+```
+
+### Simple Looping
+"Loops are slow in R. The fact puts lots of R users on the defenseive from the very beginning. But the fact is, for many people, it doesn't matter. Computers are fast and even slow looping will likely accomplish what you need in a reasonable length of time unless you are working with a really huge dataset." ~ Paleocave Blog
+
+They're right! However, as biologists we are often working with huge datasets and computational speed actually starts to matter! Plus, vectorizing these processes can make your code clean and simple to understand - we'll cover a couple simple methods now, and more complicated methods later. Just recognize that there will be cases that you'll need to use for loops!
+
+**Question:** Find the total rainfall at each site.  
+**Method 1:** Looping
+```{r comment=""}
+for(i in c("site1","site2","site3")) # For each site...
+  { # Do this:
+  print(i) # Print the site
+  print(sum(mydates$rain[mydates$site==i])) # Print the sum of rain at that site
+  }
+```
+**Method 2:** `summaryBy()`
+```{r comment="", eval=FALSE}
+library(doBy)
+```
+```{r comment="", include=FALSE}
+library(doBy)
+```
+```{r comment=""}
+summaryBy(rain~site, data=mydates, FUN=sum)
+```
+
+**Question:** Find the number of observations at each site.  
+**Method 1:** Looping
+```{r comment=""}
+for(i in c("site1","site2","site3")) # For each site...
+  { # Do this:
+  print(i) # Print the site
+  print(nrow(mydates[mydates$site==i,])) # Print the number of rows from that site
+  }
+```
+**Method 2:** `table()`
+```{r comment=""}
+table(mydates$site)
+```
+
+**Question:** Convert roots from mm to cm.  
+**Method1 **: Looping
+```{r comment=""}
+mydates$rain_cm<-NA # Create new column, filled with NAs
+for(i in 1:nrow(mydates)) # For each row of the data frame
+  { # Do this:
+  mydates$rain_cm[i]<-mydates$rain[i]/10 # Divide the value of rain in that row by 10 and place it in the rain_cm column
+  }
+```
+**Method 2:** Vectorization
+```{r comment=""}
+mydates$rain_cm<-mydates$rain/10
+```
