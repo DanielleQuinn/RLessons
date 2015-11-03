@@ -2,7 +2,7 @@
 title: "Linear Models to GLMs"
 author: "Danielle Quinn"
 date: "Tuesday, November 03, 2015"
-output: html_document
+output: word_document
 ---
 The dataset for this tutorial can be found at:
 
