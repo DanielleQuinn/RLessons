@@ -1,0 +1,7 @@
+---
+title: "Formatting Dates Using lubridate"
+author: "Danielle Quinn"
+date: "Tuesday, November 03, 2015"
+output: html_document
+---
+
