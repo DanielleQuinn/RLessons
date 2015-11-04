@@ -29,3 +29,10 @@
   - Resampling
   - Bootstrapping
   - Calculating processing time required
+* Formatting Dates Using lubridate
+  - Setting up data
+  - Using ymd() and ymd_hms()
+  - Time zones
+  - Extracting date and time components
+  - Time intervals
+  - Leap years
