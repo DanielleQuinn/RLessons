@@ -2,7 +2,7 @@
 title: "Formatting Dates Using lubridate"
 author: "Danielle Quinn"
 date: "Tuesday, November 03, 2015"
-output: html_document
+output: word_document
 ---
 
 One of the most common issues that new (and experienced!) R users have is formatting dates both prior to data import and during analyses. The simplest approach to dealing with dates is to ensure that the flat file (csv or txt) that is being read into R contains a *separate column for each component of date and time*. So, if date is a variable in your dataset, convert the date to three separate columns (day, month, year) prior to import, and if date and time are variables, convert those to six separate columns (second, minute, hour, day, month, year).
@@ -32,10 +32,117 @@ As you can see, the date and time information has been separated into individual
 head(mydata)
 ```
 
-We're going to be using the `ymd()` and `ymd_hms()` functions. These functions are designed to take a string formatted as "YYYY-MM-DD" (for `ymd()`) or "YYYY-MM-DD-HH-MM-SS" (for `ymd_hms()`) and convert it to a POSIXct object. Essentially, a POSIXct object is recognized by R as being a date or date and time and will be handled as such.
+We're going to be using the `ymd()` and `ymd_hms()` functions. These functions are designed to take character and numeric vectors, and convert it to a POSIXct object. Essentially, a POSIXct object is recognized by R as being a date or date and time and will be handled as such. The format of the vectors that these functions can recognize is flexible, but it's generally a good idea to use a standardized method. Here, we're going to set up the input as a character vector formatted as "YYYY-MM-DD" (for `ymd()`) or "YYYY-MM-DD-HH-MM-SS" (for `ymd_hms()`).
 
 **Using `ymd()` to format dates**
+
 For now, we'll only be concerned with creating a column of dates consisting of year, month, and day, and exclude the time components.
 
-*Step 1:* 
-*Step 1:* 
+Use the values of year, month, and day to create a character string that is formatted as "YYYY-MM-DD"
+
+To do this, use the `paste()` function:
+```{r, comment=""}
+paste(mydata$year, mydata$month, mydata$day, sep="-")
+```
+*Note: The `sep` argument in the `paste()` function determines what character(s) are used to separate each piece that is being pasted together.*
+
+Now we can wrap that piece of code in the `ymd()` function to create a vector of dates, properly formatted as POSIXct.
+```{r, comment=""}
+form.dates<-ymd(paste(mydata$year, mydata$month, mydata$day, sep="-"))
+form.dates
+str(form.dates)
+```
+
+We can use this vector to create a new column in `mydata`
+```{r, comment=""}
+mydata$date<-form.dates
+str(mydata)
+```
+
+**Using `ymd_hms()` to format date-times**
+
+Let's create a second column that includes both date and time, both properly formatted.
+
+Use the values of year, month, day, hour, minute, and secon to create a character string that is formatted as "YYYY-MM-DD-HH-mm-SS", wrap it in the `ymd_hms()` function and create a new column in `mydata`.
+.
+```{r, comment=""}
+mydata$datetime<-ymd_hms(paste(mydata$year, mydata$month, mydata$day, mydata$hour, mydata$minute, mydata$second, sep="-"))
+str(mydata)
+```
+
+
+There are lots of other ways to format dates in R; some are more efficient given the particular format of the original data. Here's a link to a good overview of some of the common approaches:
+
+<http://biostat.mc.vanderbilt.edu/wiki/pub/Main/ColeBeck/datestimes.pdf>
+
+**Other Handy Functions in `lubridate`**
+
+*Time Zones*
+```{r, comment=""}
+head(mydata$datetime)
+```
+
+At the moment, the `datetime` column is in UTC, or Coordinated Universal Time because it's the default when lubridate parses dates. To change this, you can use the function `force_tz()`:
+```{r, comment=""}
+mydata$datetime<-force_tz(mydata$datetime, tzone="EST") # Set as Eastern Standard Time
+mydata$datetime
+``` 
+
+Set time zone based on location:
+```{r, comment=""}
+mytime<-ymd_hms("2015-08-14-05-30-00", tz="America/Halifax")
+mytime
+```
+
+Check corresponding time in another location:
+```{r, comment=""}
+with_tz(mytime, "America/Vancouver")
+```
+
+*Extracting Information From Date-Times*
+
+Extract the minute information from `mytime`
+```{r, comment=""}
+minute(mytime)
+```
+
+Change the minute to 34
+```{r, comment=""}
+minute(mytime)<-34
+mytime
+```
+
+Find out the weekday a date falls on
+```{r, comment=""}
+wday(mytime) # As a number
+wday(mytime, label=TRUE) # As a name
+```
+
+Or the month
+```{r, comment=""}
+month(mytime, label=TRUE)
+```
+
+*Time Intervals*
+
+Set up two dates
+```{r, comment=""}
+date1<-ymd_hms("2011-09-23-03-45-23")
+date2<-ymd_hms("2011-10-03-21-02-19")
+```
+
+How much time has passed?
+```{r, comment=""}
+difftime(date2,date1)
+difftime(date2, date1, unit="mins") # In minutes
+difftime(date2, date1, unit="secs") # In seconds
+```
+
+*Leap Years*
+
+Check to see if a year was a leap year
+```{r, comment=""}
+leap_year(2011)
+leap_year(2012)
+```
+

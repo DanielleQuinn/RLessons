@@ -73,7 +73,6 @@ img {
 <p>Here’s a simple dataset that we’ll use for this tutorial: <a href="https://raw.githubusercontent.com/DanielleQuinn/RLessons/master/FormattingDates/date_data.txt">https://raw.githubusercontent.com/DanielleQuinn/RLessons/master/FormattingDates/date_data.txt</a></p>
 <p><strong>Load <code>lubridate</code> Package</strong></p>
 <pre class="r"><code>library(lubridate)</code></pre>
-<pre><code>Warning: package 'lubridate' was built under R version 3.1.2</code></pre>
 <p><strong>Import Data</strong></p>
 <pre class="r"><code>mydata&lt;-read.delim(&quot;date_data.txt&quot;)</code></pre>
 <p>As you can see, the date and time information has been separated into individual columns prior to the data being imported into R</p>
@@ -85,6 +84,114 @@ img {
 4 2014     1  16   23      0      0
 5 2014     1  17   15     45     36
 6 2014     1  17    0      0      0</code></pre>
+<p>We’re going to be using the <code>ymd()</code> and <code>ymd_hms()</code> functions. These functions are designed to take character and numeric vectors, and convert it to a POSIXct object. Essentially, a POSIXct object is recognized by R as being a date or date and time and will be handled as such. The format of the vectors that these functions can recognize is flexible, but it’s generally a good idea to use a standardized method. Here, we’re going to set up the input as a character vector formatted as “YYYY-MM-DD” (for <code>ymd()</code>) or “YYYY-MM-DD-HH-MM-SS” (for <code>ymd_hms()</code>).</p>
+<p><strong>Using <code>ymd()</code> to format dates</strong></p>
+<p>For now, we’ll only be concerned with creating a column of dates consisting of year, month, and day, and exclude the time components.</p>
+<p>Use the values of year, month, and day to create a character string that is formatted as “YYYY-MM-DD”</p>
+<p>To do this, use the <code>paste()</code> function:</p>
+<pre class="r"><code>paste(mydata$year, mydata$month, mydata$day, sep=&quot;-&quot;)</code></pre>
+<pre><code> [1] &quot;2014-1-15&quot; &quot;2014-1-15&quot; &quot;2014-1-16&quot; &quot;2014-1-16&quot; &quot;2014-1-17&quot;
+ [6] &quot;2014-1-17&quot; &quot;2014-1-18&quot; &quot;2014-1-18&quot; &quot;2014-1-19&quot; &quot;2014-1-19&quot;
+[11] &quot;2014-1-20&quot; &quot;2014-1-20&quot; &quot;2014-1-21&quot; &quot;2014-1-21&quot; &quot;2014-1-22&quot;
+[16] &quot;2014-1-22&quot; &quot;2014-1-23&quot; &quot;2014-1-23&quot;</code></pre>
+<p><em>Note: The <code>sep</code> argument in the <code>paste()</code> function determines what character(s) are used to separate each piece that is being pasted together.</em></p>
+<p>Now we can wrap that piece of code in the <code>ymd()</code> function to create a vector of dates, properly formatted as POSIXct.</p>
+<pre class="r"><code>form.dates&lt;-ymd(paste(mydata$year, mydata$month, mydata$day, sep=&quot;-&quot;))
+form.dates</code></pre>
+<pre><code> [1] &quot;2014-01-15 UTC&quot; &quot;2014-01-15 UTC&quot; &quot;2014-01-16 UTC&quot; &quot;2014-01-16 UTC&quot;
+ [5] &quot;2014-01-17 UTC&quot; &quot;2014-01-17 UTC&quot; &quot;2014-01-18 UTC&quot; &quot;2014-01-18 UTC&quot;
+ [9] &quot;2014-01-19 UTC&quot; &quot;2014-01-19 UTC&quot; &quot;2014-01-20 UTC&quot; &quot;2014-01-20 UTC&quot;
+[13] &quot;2014-01-21 UTC&quot; &quot;2014-01-21 UTC&quot; &quot;2014-01-22 UTC&quot; &quot;2014-01-22 UTC&quot;
+[17] &quot;2014-01-23 UTC&quot; &quot;2014-01-23 UTC&quot;</code></pre>
+<pre class="r"><code>str(form.dates)</code></pre>
+<pre><code> POSIXct[1:18], format: &quot;2014-01-15&quot; &quot;2014-01-15&quot; &quot;2014-01-16&quot; &quot;2014-01-16&quot; ...</code></pre>
+<p>We can use this vector to create a new column in <code>mydata</code></p>
+<pre class="r"><code>mydata$date&lt;-form.dates
+str(mydata)</code></pre>
+<pre><code>'data.frame':   18 obs. of  7 variables:
+ $ year  : int  2014 2014 2014 2014 2014 2014 2014 2014 2014 2014 ...
+ $ month : int  1 1 1 1 1 1 1 1 1 1 ...
+ $ day   : int  15 15 16 16 17 17 18 18 19 19 ...
+ $ hour  : int  13 22 14 23 15 0 16 1 17 2 ...
+ $ minute: int  45 0 45 0 45 0 45 0 45 0 ...
+ $ second: int  34 0 34 0 36 0 38 0 40 0 ...
+ $ date  : POSIXct, format: &quot;2014-01-15&quot; &quot;2014-01-15&quot; ...</code></pre>
+<p><strong>Using <code>ymd_hms()</code> to format date-times</strong></p>
+<p>Let’s create a second column that includes both date and time, both properly formatted.</p>
+<p>Use the values of year, month, day, hour, minute, and secon to create a character string that is formatted as “YYYY-MM-DD-HH-mm-SS”, wrap it in the <code>ymd_hms()</code> function and create a new column in <code>mydata</code>. .</p>
+<pre class="r"><code>mydata$datetime&lt;-ymd_hms(paste(mydata$year, mydata$month, mydata$day, mydata$hour, mydata$minute, mydata$second, sep=&quot;-&quot;))
+str(mydata)</code></pre>
+<pre><code>'data.frame':   18 obs. of  8 variables:
+ $ year    : int  2014 2014 2014 2014 2014 2014 2014 2014 2014 2014 ...
+ $ month   : int  1 1 1 1 1 1 1 1 1 1 ...
+ $ day     : int  15 15 16 16 17 17 18 18 19 19 ...
+ $ hour    : int  13 22 14 23 15 0 16 1 17 2 ...
+ $ minute  : int  45 0 45 0 45 0 45 0 45 0 ...
+ $ second  : int  34 0 34 0 36 0 38 0 40 0 ...
+ $ date    : POSIXct, format: &quot;2014-01-15&quot; &quot;2014-01-15&quot; ...
+ $ datetime: POSIXct, format: &quot;2014-01-15 13:45:34&quot; &quot;2014-01-15 22:00:00&quot; ...</code></pre>
+<p>There are lots of other ways to format dates in R; some are more efficient given the particular format of the original data. Here’s a link to a good overview of some of the common approaches:</p>
+<p><a href="http://biostat.mc.vanderbilt.edu/wiki/pub/Main/ColeBeck/datestimes.pdf">http://biostat.mc.vanderbilt.edu/wiki/pub/Main/ColeBeck/datestimes.pdf</a></p>
+<p><strong>Other Handy Functions in <code>lubridate</code></strong></p>
+<p><em>Time Zones</em></p>
+<pre class="r"><code>head(mydata$datetime)</code></pre>
+<pre><code>[1] &quot;2014-01-15 13:45:34 UTC&quot; &quot;2014-01-15 22:00:00 UTC&quot;
+[3] &quot;2014-01-16 14:45:34 UTC&quot; &quot;2014-01-16 23:00:00 UTC&quot;
+[5] &quot;2014-01-17 15:45:36 UTC&quot; &quot;2014-01-17 00:00:00 UTC&quot;</code></pre>
+<p>At the moment, the <code>datetime</code> column is in UTC, or Coordinated Universal Time because it’s the default when lubridate parses dates. To change this, you can use the function <code>force_tz()</code>:</p>
+<pre class="r"><code>mydata$datetime&lt;-force_tz(mydata$datetime, tzone=&quot;EST&quot;) # Set as Eastern Standard Time
+mydata$datetime</code></pre>
+<pre><code> [1] &quot;2014-01-15 13:45:34 EST&quot; &quot;2014-01-15 22:00:00 EST&quot;
+ [3] &quot;2014-01-16 14:45:34 EST&quot; &quot;2014-01-16 23:00:00 EST&quot;
+ [5] &quot;2014-01-17 15:45:36 EST&quot; &quot;2014-01-17 00:00:00 EST&quot;
+ [7] &quot;2014-01-18 16:45:38 EST&quot; &quot;2014-01-18 01:00:00 EST&quot;
+ [9] &quot;2014-01-19 17:45:40 EST&quot; &quot;2014-01-19 02:00:00 EST&quot;
+[11] &quot;2014-01-20 18:45:42 EST&quot; &quot;2014-01-20 03:00:00 EST&quot;
+[13] &quot;2014-01-21 19:45:44 EST&quot; &quot;2014-01-21 04:00:00 EST&quot;
+[15] &quot;2014-01-22 20:45:46 EST&quot; &quot;2014-01-22 05:00:00 EST&quot;
+[17] &quot;2014-01-23 21:45:48 EST&quot; &quot;2014-01-23 06:00:00 EST&quot;</code></pre>
+<p>Set time zone based on location:</p>
+<pre class="r"><code>mytime&lt;-ymd_hms(&quot;2015-08-14-05-30-00&quot;, tz=&quot;America/Halifax&quot;)
+mytime</code></pre>
+<pre><code>[1] &quot;2015-08-14 05:30:00 ADT&quot;</code></pre>
+<p>Check corresponding time in another location:</p>
+<pre class="r"><code>with_tz(mytime, &quot;America/Vancouver&quot;)</code></pre>
+<pre><code>[1] &quot;2015-08-14 01:30:00 PDT&quot;</code></pre>
+<p><em>Extracting Information From Date-Times</em></p>
+<p>Extract the minute information from <code>mytime</code></p>
+<pre class="r"><code>minute(mytime)</code></pre>
+<pre><code>[1] 30</code></pre>
+<p>Change the minute to 34</p>
+<pre class="r"><code>minute(mytime)&lt;-34
+mytime</code></pre>
+<pre><code>[1] &quot;2015-08-14 05:34:00 ADT&quot;</code></pre>
+<p>Find out the weekday a date falls on</p>
+<pre class="r"><code>wday(mytime) # As a number</code></pre>
+<pre><code>[1] 6</code></pre>
+<pre class="r"><code>wday(mytime, label=TRUE) # As a name</code></pre>
+<pre><code>[1] Fri
+Levels: Sun &lt; Mon &lt; Tues &lt; Wed &lt; Thurs &lt; Fri &lt; Sat</code></pre>
+<p>Or the month</p>
+<pre class="r"><code>month(mytime, label=TRUE)</code></pre>
+<pre><code>[1] Aug
+12 Levels: Jan &lt; Feb &lt; Mar &lt; Apr &lt; May &lt; Jun &lt; Jul &lt; Aug &lt; Sep &lt; ... &lt; Dec</code></pre>
+<p><em>Time Intervals</em></p>
+<p>Set up two dates</p>
+<pre class="r"><code>date1&lt;-ymd_hms(&quot;2011-09-23-03-45-23&quot;)
+date2&lt;-ymd_hms(&quot;2011-10-03-21-02-19&quot;)</code></pre>
+<p>How much time has passed?</p>
+<pre class="r"><code>difftime(date2,date1)</code></pre>
+<pre><code>Time difference of 10.72009 days</code></pre>
+<pre class="r"><code>difftime(date2, date1, unit=&quot;mins&quot;) # In minutes</code></pre>
+<pre><code>Time difference of 15436.93 mins</code></pre>
+<pre class="r"><code>difftime(date2, date1, unit=&quot;secs&quot;) # In seconds</code></pre>
+<pre><code>Time difference of 926216 secs</code></pre>
+<p><em>Leap Years</em></p>
+<p>Check to see if a year was a leap year</p>
+<pre class="r"><code>leap_year(2011)</code></pre>
+<pre><code>[1] FALSE</code></pre>
+<pre class="r"><code>leap_year(2012)</code></pre>
+<pre><code>[1] TRUE</code></pre>
 
 
 </div>
