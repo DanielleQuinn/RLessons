@@ -151,7 +151,7 @@ predictions
 ```
 
 
-It's time that we check on dispersion. Essentially, we want to look at the distribution of the data and discribe it as a non-negative number.
+It's time that we check on dispersion. Essentially, we want to look at the distribution of the data and discribe it as a non-negative number. Note that we only look at dispersion in the case of count data or other data that follows a Poisson or a related distribution.
 ```{r, comment=""}
 dispersion(M1)
 ```
