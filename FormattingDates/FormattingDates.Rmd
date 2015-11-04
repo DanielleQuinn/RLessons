@@ -7,5 +7,35 @@ output: html_document
 
 One of the most common issues that new (and experienced!) R users have is formatting dates both prior to data import and during analyses. The simplest approach to dealing with dates is to ensure that the flat file (csv or txt) that is being read into R contains a *separate column for each component of date and time*. So, if date is a variable in your dataset, convert the date to three separate columns (day, month, year) prior to import, and if date and time are variables, convert those to six separate columns (second, minute, hour, day, month, year).
 
-If you're using Excel to prepare your data for import, you can use the `=YEAR()` function, for example, to extract the year value from a cell formatted as a date. *Note:* If you ever try this and it results in an obscure date like "1900-01-01", it means that you just need to format your year column differently. If you're stuck, here's a link to a good explanation of how to deal with this! <http://www.excelfunctions.net/YearFunction.html>
+If you're using Excel to prepare your data for import, you can use the `=YEAR()` function, for example, to extract the year value from a cell formatted as a date. *Note:* If you ever try this and it results in an obscure date like "1900-01-01", it means that you just need to format your year column differently. If you're stuck, here's a link to a good explanation of how to deal with this!
 
+<http://www.excelfunctions.net/YearFunction.html>
+
+Here's a simple dataset that we'll use for this tutorial:
+<https://raw.githubusercontent.com/DanielleQuinn/RLessons/master/FormattingDates/date_data.txt>
+
+**Load `lubridate` Package**
+```{r, comment="", warning=FALSE}
+library(lubridate)
+```
+
+**Import Data**
+```{r, comment="", eval=FALSE}
+mydata<-read.delim("date_data.txt")
+```
+```{r, comment="", echo=FALSE}
+mydata<-read.delim(file="C:/Users/Danielle/Documents/GitHub/RLessons/FormattingDates/date_data.txt")
+````
+
+As you can see, the date and time information has been separated into individual columns prior to the data being imported into R
+```{r, comment=""}
+head(mydata)
+```
+
+We're going to be using the `ymd()` and `ymd_hms()` functions. These functions are designed to take a string formatted as "YYYY-MM-DD" (for `ymd()`) or "YYYY-MM-DD-HH-MM-SS" (for `ymd_hms()`) and convert it to a POSIXct object. Essentially, a POSIXct object is recognized by R as being a date or date and time and will be handled as such.
+
+**Using `ymd()` to format dates**
+For now, we'll only be concerned with creating a column of dates consisting of year, month, and day, and exclude the time components.
+
+*Step 1:* 
+*Step 1:* 
