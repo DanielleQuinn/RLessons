@@ -13,7 +13,7 @@
   - Importing data
   - Data frames
   - Indexing data frames
-  - Handling dates using lubridate
+  - Handling dates using `lubridate`
   - Simple looping
 * Linear Models to GLMs
   - Linear models
@@ -29,9 +29,9 @@
   - Resampling
   - Bootstrapping
   - Calculating processing time required
-* Formatting Dates Using lubridate
+* Formatting Dates Using `lubridate`
   - Setting up data
-  - Using ymd() and ymd_hms()
+  - Using `ymd()` and `ymd_hms()`
   - Time zones
   - Extracting date and time components
   - Time intervals
