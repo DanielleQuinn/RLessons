@@ -23,7 +23,7 @@
   - Model predictions
   - Adding factors and offsets
   - Negative binomial GLMs
-* Sensitivity Analysis
+* [Sensitivity Analysis] (http://daniellequinn.github.io/RLessons/SensitivityAnalysis/SensitivityAnalysis.html)
   - Oversampling
   - Identifying target/baseline values
   - Resampling
