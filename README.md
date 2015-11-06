@@ -1,7 +1,7 @@
 # RLessons
 ### A Collection of R Tutorials and Lessons ###
 
-* Lesson 1: Introduction to R and R Studio I
+* [Lesson 1: Introduction to R and R Studio I] (http://daniellequinn.github.io/RLessons/Lesson1/Lesson1.html)
   - Using R as a calculator
   - Functions and arguments
   - Installing and loading packages
@@ -9,7 +9,7 @@
   - Data structures
   - Indexing
   - Factors
-* Lesson 2: Introduction to R and R Studio II
+* [Lesson 2: Introduction to R and R Studio II] (http://daniellequinn.github.io/RLessons/Lesson2/Lesson2.html)
   - Importing data
   - Data frames
   - Indexing data frames
