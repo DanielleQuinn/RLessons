@@ -2,7 +2,7 @@
 title: "Introduction to Resampling in R"
 author: "Danielle Quinn"
 date: "Friday, November 06, 2015"
-output: word_document
+output: md_document
 ---
 
 > Ecological studies often suffer from limited resource availability, including time, money, and people power. Oversampling not only taxes these resources needlessly, but may also negatively influence the system being studied; for example, through lethal collections of organisms or unnecessary handling of non-target species. Projects relying on data collection over multiple field seasons may benefit from resampling algorithms that can identify efficient collection protocols if oversampling is known or thought to have occurred.
