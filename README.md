@@ -29,7 +29,7 @@
   - Resampling
   - Bootstrapping
   - Calculating processing time required
-* Formatting Dates Using `lubridate`
+* [Formatting Dates Using `lubridate`] (http://daniellequinn.github.io/RLessons/FormattingDates/FormattingDates.html)
   - Setting up data
   - Using `ymd()` and `ymd_hms()`
   - Time zones
