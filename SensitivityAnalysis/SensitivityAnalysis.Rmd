@@ -2,7 +2,7 @@
 title: "Introduction to Resampling in R"
 author: "Danielle Quinn"
 date: "Friday, November 06, 2015"
-output: md_document
+output: html_document
 ---
 
 > Ecological studies often suffer from limited resource availability, including time, money, and people power. Oversampling not only taxes these resources needlessly, but may also negatively influence the system being studied; for example, through lethal collections of organisms or unnecessary handling of non-target species. Projects relying on data collection over multiple field seasons may benefit from resampling algorithms that can identify efficient collection protocols if oversampling is known or thought to have occurred.
@@ -23,7 +23,7 @@ library(digest)
 library(lubridate)
 ```
 
-You can find the dataset [here](https://github.com/DanielleQuinn/RLessons/blob/master/SensitivityAnalysis/recapture_data.csv)
+You can find the dataset [here](https://raw.githubusercontent.com/DanielleQuinn/RLessons/master/SensitivityAnalysis/recapture_data.csv)
 
 ```{r, comment="", eval=FALSE}
 df.data<-read.csv("recapture_data.csv")
