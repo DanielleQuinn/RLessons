@@ -36,3 +36,7 @@
   - Extracting date and time components
   - Time intervals
   - Leap years
+* Mixed Effect Models (coming soon!)
+* Zero Inflated Models (coming soon!)
+* Occupancy and Detectability Models (coming soon!)
+* Tips and Tricks for Advanced `ggplot2` (coming soon!)
