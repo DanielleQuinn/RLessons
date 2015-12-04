@@ -18,10 +18,17 @@ This tutorial will use the ```mtcars``` data set:
 ```{r, comment=""}
 data(mtcars)
 ```
-
+You'll also need to load the `ggplot2` library:
+```{r, comment=""}
+library(ggplot2)
+```
 ### Layers in ggplot2 ###
 1. Set up your ggplot:
 ```{r, comment="", eval=FALSE}
 ggplot(mtcars)
 ```
-You'll notice that if you run this line of code, you'll get an error that says ```"No layers in plot"```. We'll fix this by adding a layer
+You'll notice that if you run this line of code, you'll get an error that says ```"No layers in plot"```. We'll fix this by adding a layer:
+```{r, comment=""}
+ggplot(mtcars)+
+  geom_point(aes(x=cyl, y=wt))
+```
