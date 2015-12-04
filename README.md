@@ -15,7 +15,7 @@
   - Indexing data frames
   - Handling dates using `lubridate`
   - Simple looping
-* Linear Models to GLMs
+* [Linear Models to GLMs] (http://daniellequinn.github.io/RLessons/Models/LinearModels_to_GLMs/LinearModelsToGLMs.html)
   - Linear models
   - Checking for heterogeneity
   - Poisson GLMs
@@ -35,4 +35,8 @@
   - Time zones
   - Extracting date and time components
   - Time intervals
-  - Leap years
+ - Leap years
+* Mixed Effect Models (coming soon!)
+* Zero Inflated Models (coming soon!)
+* Occupancy and Detectability Models (coming soon!)
+* Tips and Tricks for Advanced ggplot2 (coming soon!)
