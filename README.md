@@ -15,7 +15,7 @@
   - Indexing data frames
   - Handling dates using `lubridate`
   - Simple looping
-* Linear Models to GLMs
+* [Linear Models to GLMs] (http://daniellequinn.github.io/RLessons/Models/LinearModels_to_GLMs/LinearModelsToGLMs)
   - Linear models
   - Checking for heterogeneity
   - Poisson GLMs
