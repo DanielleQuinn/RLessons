@@ -23,10 +23,14 @@ output: html_document
   - Simple looping
   
 <<<<<<< HEAD
+<<<<<<< HEAD
 ####[Linear Models to GLMs](http://daniellequinn.github.io/RLessons/Models/LinearModels_to_GLMs/LinearModelsToGLMs.html)####
 =======
 ####[Linear Models to GLMs] (http://daniellequinn.github.io/RLessons/Models/LinearModels_to_GLMs/LinearModelsToGLMs.html)####
 >>>>>>> origin/gh-pages
+=======
+####[Linear Models to GLMs] (http://daniellequinn.github.io/RLessons/Models/LinearModels_to_GLMs/LinearModelsToGLMs.html)####
+>>>>>>> refs/remotes/origin/gh-pages
   - Linear models
   - Checking for heterogeneity
   - Poisson GLMs
@@ -52,6 +56,7 @@ output: html_document
   - Leap years
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 ####*New!* [Introduction to R Markdown](http://daniellequinn.github.io/RLessons/RMarkdown/RMarkdown.html)####
   - What is R Markdown?
   - Setting up a new .Rmd file
@@ -65,8 +70,13 @@ output: html_document
 ####Occupancy and Detectability Models (coming soon!)####
 ####Tips and Tricks for Advanced `ggplot2` (coming soon!)####
 =======
+=======
+>>>>>>> refs/remotes/origin/gh-pages
 ####Mixed Effect Models (coming soon!)####
 ####Zero Inflated Models (coming soon!)####
 ####Occupancy and Detectability Models (coming soon!)####
 ####Tips and Tricks for Advanced `ggplot2` (coming soon!)####
+<<<<<<< HEAD
 >>>>>>> origin/gh-pages
+=======
+>>>>>>> refs/remotes/origin/gh-pages
