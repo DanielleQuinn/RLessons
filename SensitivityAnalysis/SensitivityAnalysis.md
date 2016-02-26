@@ -27,7 +27,7 @@ Load Required Packages
     library(lubridate)
 
 You can find the dataset
-[here](https://github.com/DanielleQuinn/RLessons/blob/master/SensitivityAnalysis/recapture_data.csv)
+[here](https://raw.githubusercontent.com/DanielleQuinn/RLessons/master/SensitivityAnalysis/recapture_data.csv)
 
     df.data<-read.csv("recapture_data.csv")
 
@@ -133,7 +133,7 @@ possible traps.
     use_traps<-sample(all_traps, 10) # Choose 10 random traps
     use_traps
 
-     [1] T23 T7  T29 T37 T22 T35 T40 T8  T27 T28
+     [1] T42 T46 T25 T32 T17 T7  T6  T28 T27 T34
     50 Levels: T1 T10 T11 T12 T13 T14 T15 T16 T17 T18 T19 T2 T20 T21 ... T9
 
 Subset the data to include only those traps (using `dplyr`), then, just
@@ -155,7 +155,7 @@ size.
     results
 
          N pop.low pop.high
-    1 5582    5258     5948
+    1 5429    5117     5781
 
 > How does the baseline population estimate compare to the estimate
 > using only 10 random traps?
@@ -170,7 +170,7 @@ size.
     results
 
          N pop.low pop.high
-    1 5582    5258     5948
+    1 5429    5117     5781
 
 Resampling Traps - Sample X Random Traps
 ----------------------------------------
@@ -280,59 +280,59 @@ with NA.
     results
 
        traps pop.est pop.low pop.high
-    1      1    5528    4632     6855
-    2      2    5492    4830     6365
-    3      3    5186    4674     5823
-    4      4    5528    5039     6123
-    5      5    5361    4939     5863
-    6      6    5577    5166     6059
-    7      7    5442    5073     5869
-    8      8    5502    5148     5907
-    9      9    5395    5071     5763
-    10    10    5381    5074     5727
-    11    11    5745    5421     6110
-    12    12    5532    5239     5861
-    13    13    5576    5291     5895
-    14    14    5507    5237     5808
-    15    15    5549    5283     5843
-    16    16    5427    5177     5701
-    17    17    5476    5231     5746
-    18    18    5580    5334     5849
-    19    19    5514    5279     5771
-    20    20    5474    5248     5721
-    21    21    5395    5179     5631
-    22    22    5434    5220     5666
-    23    23    5377    5170     5601
-    24    24    5533    5322     5761
-    25    25    5542    5334     5766
-    26    26    5485    5284     5701
-    27    27    5525    5326     5739
-    28    28    5490    5296     5699
-    29    29    5502    5311     5708
-    30    30    5478    5292     5679
-    31    31    5481    5298     5679
-    32    32    5471    5290     5664
-    33    33    5414    5239     5602
-    34    34    5492    5315     5680
-    35    35    5492    5317     5677
-    36    36    5532    5358     5717
-    37    37    5497    5328     5678
-    38    38    5520    5351     5699
-    39    39    5445    5282     5618
-    40    40    5522    5358     5697
-    41    41    5491    5330     5662
-    42    42    5514    5354     5685
-    43    43    5528    5369     5697
-    44    44    5492    5337     5657
-    45    45    5516    5361     5680
-    46    46    5485    5333     5646
-    47    47    5517    5365     5678
-    48    48    5503    5354     5662
-    49    49    5499    5351     5655
+    1      1    5800    4835     7246
+    2      2    5027    4443     5787
+    3      3    5477    4928     6165
+    4      4    6064    5502     6752
+    5      5    5522    5079     6049
+    6      6    5337    4952     5788
+    7      7    5360    4998     5779
+    8      8    5449    5100     5848
+    9      9    5389    5064     5758
+    10    10    5657    5326     6031
+    11    11    5454    5154     5791
+    12    12    5436    5150     5756
+    13    13    5594    5307     5914
+    14    14    5484    5214     5782
+    15    15    5509    5246     5800
+    16    16    5448    5198     5724
+    17    17    5685    5426     5970
+    18    18    5529    5287     5795
+    19    19    5475    5243     5729
+    20    20    5445    5220     5690
+    21    21    5543    5317     5789
+    22    22    5437    5223     5670
+    23    23    5435    5226     5663
+    24    24    5630    5414     5864
+    25    25    5505    5299     5727
+    26    26    5429    5232     5642
+    27    27    5493    5295     5705
+    28    28    5497    5303     5706
+    29    29    5490    5300     5694
+    30    30    5528    5339     5732
+    31    31    5551    5363     5752
+    32    32    5456    5276     5649
+    33    33    5491    5312     5683
+    34    34    5483    5307     5672
+    35    35    5544    5367     5732
+    36    36    5543    5369     5728
+    37    37    5443    5276     5622
+    38    38    5470    5303     5647
+    39    39    5484    5319     5659
+    40    40    5464    5302     5636
+    41    41    5479    5318     5649
+    42    42    5474    5316     5642
+    43    43    5462    5305     5627
+    44    44    5500    5344     5666
+    45    45    5480    5327     5643
+    46    46    5525    5371     5688
+    47    47    5490    5339     5649
+    48    48    5506    5356     5665
+    49    49    5493    5345     5650
     50    50    5496    5349     5650
 
 Looking at `results`, you can see that when we sample 2 random traps,
-our population estimate is 5492
+our population estimate is 5027
 
 **Step 4:** Visualize results
 
@@ -420,15 +420,15 @@ realistically set up.
     totaltime<-difftime(Sys.time(),starttime, unit="secs") #How long did it take?
     totaltime
 
-    Time difference of 4.183897 secs
+    Time difference of 3.681289 secs
 
     per.it<-round(as.numeric(totaltime)/nrow(results),3)
     paste(per.it,"seconds per iteration") # How long did each iteration take?
 
-    [1] "0.006 seconds per iteration"
+    [1] "0.005 seconds per iteration"
 
 Depending on the processing power of your computer, each iteration took
-approximately 0.006.
+approximately 0.005.
 
 **Step 4:** Visualize results
 
@@ -533,7 +533,7 @@ to see what would happen if 5 to 20 checks were done.
     20 Levels: C1 C10 C11 C12 C13 C14 C15 C16 C17 C18 C19 C2 C20 C3 C4 ... C9
 
 Because we've been keeping track of how long each iteration takes
-(approx. 0.006 seconds, depending on the processing power of your
+(approx. 0.005 seconds, depending on the processing power of your
 computer), we know that we can easily do more iterations within a
 reasonable time frame. We'll do 40 repeats this time.
 
@@ -554,7 +554,7 @@ argument you give it.
 
     nrow(results)*per.it/60 # Based on our estimated time per iteration from previous results, how long will this take?
 
-    [1] 1.64
+    [1] 1.366667
 
     # We can get rid of the repeats column
     results<-results[,-3]
@@ -581,12 +581,12 @@ argument you give it.
     totaltime<-difftime(Sys.time(),starttime, unit="secs")
     totaltime
 
-    Time difference of 200.4167 secs
+    Time difference of 211.5261 secs
 
     per.it<-round(as.numeric(totaltime)/nrow(results),3)
     paste(per.it,"seconds per iteration")
 
-    [1] "0.012 seconds per iteration"
+    [1] "0.013 seconds per iteration"
 
 **Step 4:** Visualize results
 
