@@ -22,7 +22,11 @@ output: html_document
   - Handling dates using `lubridate`
   - Simple looping
   
+<<<<<<< HEAD
 ####[Linear Models to GLMs](http://daniellequinn.github.io/RLessons/Models/LinearModels_to_GLMs/LinearModelsToGLMs.html)####
+=======
+####[Linear Models to GLMs] (http://daniellequinn.github.io/RLessons/Models/LinearModels_to_GLMs/LinearModelsToGLMs.html)####
+>>>>>>> origin/gh-pages
   - Linear models
   - Checking for heterogeneity
   - Poisson GLMs
@@ -47,6 +51,7 @@ output: html_document
   - Time intervals
   - Leap years
 
+<<<<<<< HEAD
 ####*New!* [Introduction to R Markdown](http://daniellequinn.github.io/RLessons/RMarkdown/RMarkdown.html)####
   - What is R Markdown?
   - Setting up a new .Rmd file
@@ -59,3 +64,9 @@ output: html_document
 ####Zero Inflated Models (coming soon!)####
 ####Occupancy and Detectability Models (coming soon!)####
 ####Tips and Tricks for Advanced `ggplot2` (coming soon!)####
+=======
+####Mixed Effect Models (coming soon!)####
+####Zero Inflated Models (coming soon!)####
+####Occupancy and Detectability Models (coming soon!)####
+####Tips and Tricks for Advanced `ggplot2` (coming soon!)####
+>>>>>>> origin/gh-pages
