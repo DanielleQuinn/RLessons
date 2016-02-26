@@ -1,0 +1,258 @@
+---
+title: "Introduction to R Markdown"
+author: "Danielle Quinn"
+date: "February 25, 2016"
+output: html_document
+---
+
+###What is R Markdown?###
+R Markdown is described [here](http://rmarkdown.rstudio.com/) as "*an authoring format that enables easy creation of dynamic documents, presentations, and reports from R*". Using R Markdown, you can generate documents with pieces, or "chunks", of R code embedded throughout. When the document is rendered, these chunks are evaluated, and the results are nested in the document according to your specified conventions.
+
+####Why is this useful?####
+Imagine you are tasked with generating a report about the water quality of each of 10 rivers. You can either:
+
+* Produce figures and tables for each river and then individually paste those elements into each document, *or*  
+* Use R Markdown to generate 10 identically formatted documents that each include the corresponding figures and tables
+
+Now imagine that an error is found in the dataset, and all of your figures need to be updated. Rather than update and replace each figure indivually, R Markdown allows to to simply re-render your documents using the corrected dataset!
+
+###Setting Up A New R Markdown Document###
+(As with everything R), I highly recommend using [R Studio] (www.rstudio.com) to create R Markdown documents! Start by selecting `R Markdown...` from the drop down menu that appears when you create a new R file:
+
+```{r, echo=FALSE, fig.height=3}
+library(png)
+library(grid)
+img<-readPNG("image1.png")
+grid.raster(img)
+```
+
+**Note:** You may be prompted here to install several packages that are required for R Markdown to run successfully. 
+
+A window will pop up, asking you to give your markdown document a name and author, as well as specifying the output format of your document. Select 'HTML' because later we'll be interested in turning it into a webpage; you can change your output preferences from HTML to 'PDF' or 'Word' at any time.
+
+```{r, echo=FALSE, fig.height=4}
+img<-readPNG("image2.png")
+grid.raster(img)
+```
+
+This will bring you to your first .Rmd (or R Markdown) file. You'll see that your new markdown file already has a template with basic instructions. Because we want to start fresh and create our own document, just delete lines 8-23!
+
+```{r, echo=FALSE, fig.height=3}
+img<-readPNG("image3.png")
+grid.raster(img)
+```
+
+If you're a regular user of R, you're familiar with using `#` to denote text that R will not evaluate. In R Markdown documents, rather than tell R what *not* to evaluate (using `#`), you tell R what it *does* evaluate (we'll do that a little later!).
+
+_____
+
+> ##Exercise 1
+Create a new R Markdown file, write a few lines of text, and click on "Knit HTML" to see what your rendered document will look like.  
+```{r, echo=FALSE, fig.height=2}
+img<-readPNG("image4.png")
+grid.raster(img)
+```
+
+_____
+
+###Formatting with Markdown Syntax###
+There are a few great online references to R Markdown that have information about general markdown syntax, including [this simple guide](https://www.rstudio.com/wp-content/uploads/2015/02/rmarkdown-cheatsheet.pdf), and [this more in-depth guide](http://www.rstudio.com/wp-content/uploads/2015/03/rmarkdown-reference.pdf).
+
+This whole tutorial is actually created using R Markdown, so I'll be including screen shots of the raw markdown document to demonstrate how markdown syntax works. (markdown inception...!)
+
+_____
+
+####Input:
+```{r, echo=FALSE, fig.height=1}
+img<-readPNG("image5.png")
+grid.raster(img)
+```
+
+####Output:
+Create headers of various sizes:  
+
+#Header 1 
+##Header 2  
+###Header 3
+
+_____
+
+####Input:
+```{r, echo=FALSE, fig.height=1}
+img<-readPNG("image6.png")
+grid.raster(img)
+```
+
+####Output:
+Make text **bold**, *italic*, ~~strikethrough~~, or super^script^
+
+_____
+
+####Input:
+```{r, echo=FALSE, fig.height=1}
+img<-readPNG("image7.png")
+grid.raster(img)
+```
+
+####Output:
+Add an image:
+
+![](megaman.png)
+
+_____
+
+####Input:
+```{r, echo=FALSE, fig.height=0.75}
+img<-readPNG("image8.png")
+grid.raster(img)
+```
+
+####Output:
+Create a link to [Google](www.google.com)
+
+_____
+
+> ##Exercise 2
+Practice formatting using markdown syntax by setting up headers, making text **bold** and *italic*, embedding an image, and adding a [link](www.r-bar.ca). Think about where your image needs to be saved, and/or how to define the pathway to your image for R to locate and embed it properly.
+
+_____
+
+###Embedding Code
+To embed R code in your markdown document, you'll need to define an area in which R code should be evaluated. This is also known as a 'chunk', and is defined by using:
+
+```{r, echo=FALSE, fig.height=1}
+img<-readPNG("image9.png")
+grid.raster(img)
+```
+
+You'll notice that the R chunk is a darker grey than the markdown pieces above and below it. Anything that is included in the chunk is evalauted and displayed according to specifications that you can modify.
+
+Let's begin by creating a dataframe that we might want to analyze:
+
+- site: 10 sites, labelled a to j
+- visit: 2 visits per site
+- habitat: 5 ocean sites, 5 river sites
+- richness: species richness at each site, per visit
+
+####Input:
+```{r, echo=FALSE, fig.height=2}
+img<-readPNG("image10.png")
+grid.raster(img)
+```
+
+####Output:
+```{r}
+mydata<-data.frame(site=rep(letters[1:10],2),
+                   visit=c(rep(1,10), rep(2,10)),
+                  habitat=rep(c(rep("ocean",5),rep("river",5)),2),
+                  richness=round(abs(rnorm(20,5,3)),0))
+str(mydata) # Look at the structure of your dataframe
+```
+
+When your document is rendered, the chunk of code is displayed in a grey box, and the results of that code displayed in a white box. What if you only wanted the output of your code to be displayed? Or for your code to be displayed but not actually run? There are arguments that you can add to each of your chunks to specify these and other options:
+
+_____
+
+Add argument `echo=FALSE`
+
+####Input:
+```{r, echo=FALSE, fig.height=2}
+img<-readPNG("image11.png")
+grid.raster(img)
+```
+
+####Output:
+
+```{r, echo=FALSE}
+mydata<-data.frame(site=rep(letters[1:10],2),
+                   visit=c(rep(1,10), rep(2,10)),
+                  habitat=rep(c(rep("ocean",5),rep("river",5)),2),
+                  richness=round(abs(rnorm(20,5,3)),0))
+str(mydata) # Look at the structure of your dataframe
+```
+
+You can see that the code is hidden but the results are shown.
+
+_____
+
+[This](http://www.rstudio.com/wp-content/uploads/2015/03/rmarkdown-reference.pdf) reference is a great guide to 'chunk options' like these:
+```{r, echo=FALSE, fig.height=4}
+img<-readPNG("image12.png")
+grid.raster(img)
+```
+
+____
+
+> ##Exercise 3
+Create a data frame, and look at its first few rows (using the `head()` function) and structure (using the `str()` function). Try using the arguments `eval`, `include`, `collapse`, and `echo` when setting up your chunk. How do they influence the rendered document?
+
+_____
+
+###Embedding Plots
+Plots can be easily embedded into markdown documents simply by using plotting functions available in `{base}`, `{ggplot2}`, or `{lattice}` as you would in a typical R script.
+
+_____
+
+####Input:
+```{r, echo=FALSE, fig.height=1.5}
+img<-readPNG("image13.png")
+grid.raster(img)
+```
+
+####Output:
+
+```{r, echo=FALSE}
+library(ggplot2)
+ggplot(mydata)+
+  geom_boxplot(aes(x=habitat, y=richness), fill="grey90")+
+  theme_bw(15)+ylab("Species Richness")+xlab("Habitat Type")
+```
+
+_____
+
+You can also use the arguments:
+
+- `dpi`: define dots per inch
+- `fig.align`: figure alignment in the rendered document, can be `left`, `right`, or `center`
+- `fig.height` and `fig.width`: define figure size
+- `fig.path`: file path to the directory where the figure should be saved
+
+
+###Embedding R Code In-Line
+You might have noticed throughout this tutorial that I have small bits of text that look like `pieces of code`. This is referred to as embedding code in-line, and there are actually a couple different ways that this can be used.
+
+The first is the simplest; we simply want to take a piece of text and give it the appearance of a piece of code. This is useful when we are decribing what functions we've used, like `str()` or when we are referring in the text to a particular object that exists in our R environment, like `mydata`. It's simply a way to communicate to the reader that the text should be interpreted in the context of R code. It's very easy to do this; just add ` to either side of your text, like this:
+
+_____
+
+####Input: 
+```{r, echo=FALSE, fig.height=0.5}
+img<-readPNG("image14.png")
+grid.raster(img)
+```
+
+####Output:
+The name of our data frame is `mydata`.
+
+_____
+
+The second way that this is used is to actually evaluate R code in-line, and embed the results of that evaluation in the text of the rendered document. For example, consider the sentence "The average species richness found at site b was *X*". The first option here is to calculate that value and then manually enter the result into the sentence itself. But what if the data set changes? You'll need to recalculate that value and replace it manually. It's much more efficient to use code embedded and evaluated in-line, like this:
+
+_____
+
+####Input:
+```{r, echo=FALSE, fig.height=0.75}
+img<-readPNG("image15.png")
+grid.raster(img)
+```
+
+####Output:
+The average species richness found at site b was `r mean(mydata$richness[mydata$site=="b"])`.
+
+(Remember that the richness values are randomly generated when the dataset is created so your value may be diffrerent than this one!)
+
+____
+
+
+
+
