@@ -36,7 +36,7 @@
   - Extracting date and time components
   - Time intervals
   - Leap years
-* *New!* [Introduction to R Markdown] (http://daniellequinn.github.io/RLessons/RMarkdown/RMarkdown.html))
+* *New!* [Introduction to R Markdown] (http://daniellequinn.github.io/RLessons/RMarkdown/RMarkdown.html)
   - What is R Markdown?
   - Setting up a new .Rmd file
   - Basic markdown syntax
