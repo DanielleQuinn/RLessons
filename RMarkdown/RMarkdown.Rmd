@@ -17,7 +17,7 @@ Imagine you are tasked with generating a report about the water quality of each 
 Now imagine that an error is found in the dataset, and all of your figures need to be updated. Rather than update and replace each figure indivually, R Markdown allows to to simply re-render your documents using the corrected dataset!
 
 ###Setting Up A New R Markdown Document###
-(As with everything R), I highly recommend using [R Studio] (www.rstudio.com) to create R Markdown documents! Start by selecting `R Markdown...` from the drop down menu that appears when you create a new R file:
+(As with everything R), I highly recommend using [R Studio](www.rstudio.com) to create R Markdown documents! Start by selecting `R Markdown...` from the drop down menu that appears when you create a new R file:
 
 ```{r, echo=FALSE, fig.height=3}
 library(png)
@@ -108,12 +108,12 @@ grid.raster(img)
 ```
 
 ####Output:
-Create a link to [Google](www.google.com)
+Create a link to [Google](https://www.google.com)
 
 _____
 
 > ##Exercise 2
-Practice formatting using markdown syntax by setting up headers, making text **bold** and *italic*, embedding an image, and adding a [link](www.r-bar.ca). Think about where your image needs to be saved, and/or how to define the pathway to your image for R to locate and embed it properly.
+Practice formatting using markdown syntax by setting up headers, making text **bold** and *italic*, embedding an image, and adding a [link](https://www.r-bar.ca). Think about where your image needs to be saved, and/or how to define the pathway to your image for R to locate and embed it properly.
 
 _____
 
