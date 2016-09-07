@@ -2,7 +2,7 @@
 title: "Introduction to R Markdown"
 author: "Danielle Quinn"
 date: "February 25, 2016"
-output: html_document
+output: word_document
 ---
 
 ###What is R Markdown?###
