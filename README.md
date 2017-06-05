@@ -36,14 +36,10 @@
   - Extracting date and time components
   - Time intervals
   - Leap years
-* *New!* [Introduction to R Markdown](http://daniellequinn.github.io/RLessons/RMarkdown/RMarkdown.html)
+* [Introduction to R Markdown](http://daniellequinn.github.io/RLessons/RMarkdown/RMarkdown.html)
   - What is R Markdown?
   - Setting up a new .Rmd file
   - Basic markdown syntax
   - Embedding and evaluating R code
   - Embedding plots
   - Embedding code in-line
-* Mixed Effect Models (coming soon!)
-* Zero Inflated Models (coming soon!)
-* Occupancy and Detectability Models (coming soon!)
-* Tips and Tricks for Advanced `ggplot2` (coming soon!)
