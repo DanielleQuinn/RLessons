@@ -1,7 +1,7 @@
 # RLessons
 ### A Collection of R Tutorials and Lessons ###
 
-* [Lesson 1: Introduction to R and R Studio I] (http://daniellequinn.github.io/RLessons/Lesson1/Lesson1.html)
+* [Lesson 1: Introduction to R and R Studio I](http://daniellequinn.github.io/RLessons/Lesson1/Lesson1.html)
   - Using R as a calculator
   - Functions and arguments
   - Installing and loading packages
@@ -9,13 +9,13 @@
   - Data structures
   - Indexing
   - Factors
-* [Lesson 2: Introduction to R and R Studio II] (http://daniellequinn.github.io/RLessons/Lesson2/Lesson2.html)
+* [Lesson 2: Introduction to R and R Studio II](http://daniellequinn.github.io/RLessons/Lesson2/Lesson2.html)
   - Importing data
   - Data frames
   - Indexing data frames
   - Handling dates using `lubridate`
   - Simple looping
-* [Linear Models to GLMs] (http://daniellequinn.github.io/RLessons/Models/LinearModels_to_GLMs/LinearModelsToGLMs)
+* [Linear Models to GLMs](http://daniellequinn.github.io/RLessons/Models/LinearModels_to_GLMs/LinearModelsToGLMs)
   - Linear models
   - Checking for heterogeneity
   - Poisson GLMs
@@ -23,20 +23,20 @@
   - Model predictions
   - Adding factors and offsets
   - Negative binomial GLMs
-* [Sensitivity Analysis] (http://daniellequinn.github.io/RLessons/SensitivityAnalysis/SensitivityAnalysis.html)
+* [Sensitivity Analysis](http://daniellequinn.github.io/RLessons/SensitivityAnalysis/SensitivityAnalysis.html)
   - Oversampling
   - Identifying target/baseline values
   - Resampling
   - Bootstrapping
   - Calculating processing time required
-* [Formatting Dates Using `lubridate`] (http://daniellequinn.github.io/RLessons/FormattingDates/FormattingDates.html)
+* [Formatting Dates Using `lubridate`](http://daniellequinn.github.io/RLessons/FormattingDates/FormattingDates.html)
   - Setting up data
   - Using `ymd()` and `ymd_hms()`
   - Time zones
   - Extracting date and time components
   - Time intervals
   - Leap years
-* *New!* [Introduction to R Markdown] (http://daniellequinn.github.io/RLessons/RMarkdown/RMarkdown.html)
+* *New!* [Introduction to R Markdown](http://daniellequinn.github.io/RLessons/RMarkdown/RMarkdown.html)
   - What is R Markdown?
   - Setting up a new .Rmd file
   - Basic markdown syntax
