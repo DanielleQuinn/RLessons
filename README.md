@@ -43,3 +43,6 @@
   - Embedding and evaluating R code
   - Embedding plots
   - Embedding code in-line
+
+
+Please note that these tutorials are a mix of independently-developed material and material modified from other sources including Highland Stats Ltd., Tal Galili, and RStudio. Thank you to the R community for its ongoing dissemination of knowledge!
